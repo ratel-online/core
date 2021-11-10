@@ -13,17 +13,17 @@ func NewWebsocketReadWriteCloser(conn *websocket.Conn) WebsocketReadWriteCloser 
 	return WebsocketReadWriteCloser{conn: conn}
 }
 
-func (w WebsocketReadWriteCloser) Read() (*Msg, error) {
+func (w WebsocketReadWriteCloser) Read() (*Packet, error) {
 	_, b, err := w.conn.ReadMessage()
 	if err != nil {
 		return nil, err
 	}
-	msg := &Msg{}
+	msg := &Packet{}
 	json.Unmarshal(b, msg)
 	return msg, nil
 }
 
-func (w WebsocketReadWriteCloser) Write(msg Msg) error {
+func (w WebsocketReadWriteCloser) Write(msg Packet) error {
 	return w.conn.WriteMessage(websocket.TextMessage, json.Marshal(msg))
 }
 

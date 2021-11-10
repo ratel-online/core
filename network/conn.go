@@ -6,18 +6,13 @@ import (
 )
 
 type Conn struct {
-	ID int64 `json:"id"`
-
 	state   int
 	conn    protocol.ReadWriteCloser
-	streams []byte
 }
 
-func Wrapper(id int64, conn protocol.ReadWriteCloser) *Conn {
+func Wrapper(conn protocol.ReadWriteCloser) *Conn {
 	return &Conn{
-		ID:      id,
 		conn:    conn,
-		streams: make([]byte, 0),
 	}
 }
 
