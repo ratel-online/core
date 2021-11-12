@@ -13,11 +13,11 @@ func NewTcpReadWriteCloser(conn net.Conn) TcpReadWriteCloser {
 }
 
 func (t TcpReadWriteCloser) Read() (*Packet, error) {
-	return Decode(t.conn)
+	return decode(t.conn)
 }
 
 func (t TcpReadWriteCloser) Write(msg Packet) error {
-	_, err := t.conn.Write(Encode(msg))
+	_, err := t.conn.Write(encode(msg))
 	return err
 }
 

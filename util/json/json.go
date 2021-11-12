@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-func init(){
+func init() {
 	jsoniter.RegisterTypeEncoderFunc("[]uint8", func(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		t := *((*[]byte)(ptr))
 		stream.WriteString(string(t))
@@ -16,11 +16,11 @@ func init(){
 	})
 }
 
-func Marshal(v interface{}) []byte{
+func Marshal(v interface{}) []byte {
 	data, _ := jsoniter.Marshal(v)
 	return data
 }
 
-func Unmarshal(data []byte, v interface{}){
-	_ = jsoniter.Unmarshal(data, v)
+func Unmarshal(data []byte, v interface{}) error {
+	return jsoniter.Unmarshal(data, v)
 }

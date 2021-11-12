@@ -1,19 +1,27 @@
 package network
 
-import "C"
 import (
 	"github.com/ratel-online/core/protocol"
+	"sync/atomic"
 )
 
+var connId int64
+
 type Conn struct {
-	state   int
-	conn    protocol.ReadWriteCloser
+	id    int64
+	state int
+	conn  protocol.ReadWriteCloser
 }
 
 func Wrapper(conn protocol.ReadWriteCloser) *Conn {
 	return &Conn{
-		conn:    conn,
+		id:   atomic.AddInt64(&connId, 1),
+		conn: conn,
 	}
+}
+
+func (c *Conn) ID() int64 {
+	return c.id
 }
 
 func (c *Conn) Close() error {
@@ -27,15 +35,18 @@ func (c *Conn) State() int {
 
 func (c *Conn) Accept(apply func(msg protocol.Packet, c *Conn)) error {
 	for {
-		msg, err := c.conn.Read()
+		packet, err := c.conn.Read()
 		if err != nil {
 			return err
 		}
-		apply(*msg, c)
+		apply(*packet, c)
 	}
 }
 
-func (c *Conn) Write(msg protocol.Packet) error {
-	return c.conn.Write(msg)
+func (c *Conn) Write(packet protocol.Packet) error {
+	return c.conn.Write(packet)
 }
 
+func (c *Conn) Read() (*protocol.Packet, error) {
+	return c.conn.Read()
+}

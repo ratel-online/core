@@ -2,15 +2,42 @@ package protocol
 
 import (
 	"encoding/binary"
+	"github.com/ratel-online/core/util/json"
 	"io"
+	"strconv"
 )
 
 var (
-	lenSize     = 4
+	lenSize = 4
 )
 
 type Packet struct {
 	Body []byte `json:"data"`
+}
+
+func (p Packet) Int() int {
+	v, _ := strconv.ParseInt(p.String(), 10, 64)
+	return int(v)
+}
+
+func (p Packet) String() string {
+	return string(p.Body)
+}
+
+func (p Packet) Unmarshal(v interface{}) error {
+	return json.Unmarshal(p.Body, v)
+}
+
+func StringPacket(msg string) Packet {
+	return Packet{
+		Body: []byte(msg),
+	}
+}
+
+func ErrorPacket(err error) Packet {
+	return Packet{
+		Body: []byte(err.Error()),
+	}
 }
 
 type ReadWriteCloser interface {
@@ -19,7 +46,7 @@ type ReadWriteCloser interface {
 	Close() error
 }
 
-func ReadUint32(reader io.Reader) (uint32, error) {
+func readUint32(reader io.Reader) (uint32, error) {
 	data := make([]byte, 4)
 	_, err := io.ReadFull(reader, data)
 	if err != nil {
@@ -28,7 +55,7 @@ func ReadUint32(reader io.Reader) (uint32, error) {
 	return binary.BigEndian.Uint32(data), nil
 }
 
-func ReadUint64(reader io.Reader) (uint64, error) {
+func readUint64(reader io.Reader) (uint64, error) {
 	data := make([]byte, 8)
 	_, err := io.ReadFull(reader, data)
 	if err != nil {
@@ -37,7 +64,7 @@ func ReadUint64(reader io.Reader) (uint64, error) {
 	return binary.BigEndian.Uint64(data), nil
 }
 
-func Encode(msg Packet) []byte {
+func encode(msg Packet) []byte {
 	lenBytes := make([]byte, lenSize)
 	binary.BigEndian.PutUint32(lenBytes, uint32(len(msg.Body)))
 	data := make([]byte, 0)
@@ -45,8 +72,8 @@ func Encode(msg Packet) []byte {
 	return append(data, msg.Body...)
 }
 
-func Decode(r io.Reader) (*Packet, error) {
-	l, err := ReadUint32(r)
+func decode(r io.Reader) (*Packet, error) {
+	l, err := readUint32(r)
 	if err != nil {
 		return nil, err
 	}
