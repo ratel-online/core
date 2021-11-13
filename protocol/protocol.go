@@ -40,6 +40,12 @@ func ErrorPacket(err error) Packet {
 	}
 }
 
+func ObjectPacket(obj interface{}) Packet{
+	return Packet{
+		Body: json.Marshal(obj),
+	}
+}
+
 type ReadWriteCloser interface {
 	Read() (*Packet, error)
 	Write(msg Packet) error
