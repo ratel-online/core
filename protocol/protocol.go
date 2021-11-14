@@ -15,9 +15,14 @@ type Packet struct {
     Body []byte `json:"data"`
 }
 
-func (p Packet) Int() int {
+func (p Packet) Int() (int, error) {
+    v, err := strconv.ParseInt(p.String(), 10, 64)
+    return int(v), err
+}
+
+func (p Packet) Int64() (int64, error) {
     v, _ := strconv.ParseInt(p.String(), 10, 64)
-    return int(v)
+    return v, nil
 }
 
 func (p Packet) String() string {
