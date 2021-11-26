@@ -18,6 +18,14 @@ func init() {
 			})
 		}
 	}
+	for k := 14; k <= 15; k++ {
+		base = append(base, model.Poker{
+			Key:  k,
+			Val:  0,
+			Type: 1,
+			Desc: desc(k),
+		})
+	}
 }
 
 func desc(k int) string {
@@ -66,4 +74,19 @@ func Distribute(number int, reserved bool) []model.Pokers {
 		pokersArr = append(pokersArr, pokers[size-reserve:])
 	}
 	return pokersArr
+}
+
+func SetValue(pokers model.Pokers, kv map[int]int) {
+	for i := range pokers {
+		pokers[i].Val = kv[pokers[i].Key]
+	}
+}
+
+func ParseFaces(pokers model.Pokers) (*model.Faces, error) {
+	faces := map[int]int{}
+	for _, poker := range pokers {
+		faces[poker.Key]++
+	}
+	_ = make([]int, 0)
+	return nil, nil
 }

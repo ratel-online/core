@@ -20,6 +20,11 @@ type Poker struct {
 	Desc string `json:"desc"`
 }
 
+type Faces struct {
+	Types []int `json:"types"`
+	Score int   `json:"score"`
+}
+
 func (pokers Pokers) Shuffle() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	l := len(pokers)
