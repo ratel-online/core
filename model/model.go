@@ -1,7 +1,11 @@
 package model
 
 import (
+	"bytes"
+	"fmt"
+	"github.com/ratel-online/core/consts"
 	"math/rand"
+	"sort"
 	"time"
 )
 
@@ -21,8 +25,19 @@ type Poker struct {
 }
 
 type Faces struct {
-	Types []int `json:"types"`
-	Score int   `json:"score"`
+	Counts []int            `json:"types"`
+	Score  int64            `json:"score"`
+	Type   consts.FacesType `json:"type"`
+}
+
+func (f *Faces) SetScore(score int64) *Faces {
+	f.Score = score
+	return f
+}
+
+func (f *Faces) SetType(t consts.FacesType) *Faces {
+	f.Type = t
+	return f
 }
 
 func (pokers Pokers) Shuffle() {
@@ -35,4 +50,24 @@ func (pokers Pokers) Shuffle() {
 
 func (pokers Pokers) Swap(i, j int) {
 	pokers[i], pokers[j] = pokers[j], pokers[i]
+}
+
+func (pokers Pokers) SortByKey() {
+	sort.Slice(pokers, func(i, j int) bool {
+		return pokers[i].Key < pokers[j].Key
+	})
+}
+
+func (pokers Pokers) SortByValue() {
+	sort.Slice(pokers, func(i, j int) bool {
+		return pokers[i].Val < pokers[j].Val
+	})
+}
+
+func (pokers Pokers) String() string {
+	buf := bytes.Buffer{}
+	for _, poker := range pokers {
+		buf.WriteString(fmt.Sprintf("%v ", poker.Key))
+	}
+	return buf.String()
 }
