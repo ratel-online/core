@@ -143,11 +143,14 @@ func ParseFaces(pokers model.Pokers, rules Rules) *model.Faces {
 				}
 			} else if rules.IsStraight(group[keys[0]], keys[0]) {
 				return faces.SetType(consts.FacesStraight)
+			} else if len(group[keys[0]]) == 2 && keys[0] == 4 {
+				return faces.SetType(consts.FacesUnion)
 			}
 		} else if len(keys) == 2 && keys[1] <= 2 {
 			ml := len(group[keys[0]])
 			al := len(group[keys[1]])
-			if (keys[0] == 3 && ml == al) || (al%ml == 0 && al/ml <= 2) {
+
+			if (keys[0] == 3 && (ml == al || (keys[1] == 2 && ml == 2*al))) || (al%ml == 0 && (al/ml == 2 || (keys[1] == 2 && ml/al == 1))) {
 				if len(group[keys[0]]) == 1 {
 					return faces.SetScore(int64(math.Sum(group[keys[0]]...) * keys[0])).SetType(consts.FacesUnion)
 				} else if rules.IsStraight(group[keys[0]], keys[0]) {
