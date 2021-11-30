@@ -41,6 +41,10 @@ func (d _defaultRules) IsStraight(faces []int, count int) bool {
 	return false
 }
 
+func (d _defaultRules) StraightBoundary() (int, int) {
+	return 1, 12
+}
+
 func getPokers(keys ...int) model.Pokers {
 	pokers := make(model.Pokers, 0)
 	for _, k := range keys {
@@ -93,29 +97,31 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(3, 3, 3, 4, 4, 5), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3, 4), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3, 4, 5), consts.FacesUnion},
-		{getPokers(3, 3, 3, 3, 3, 4, 5), consts.FacesUnion},
+		{getPokers(3, 3, 3, 3, 3, 4, 5), consts.FacesInvalid},
 		{getPokers(3, 4, 5, 6, 7), consts.FacesStraight},
 		{getPokers(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1), consts.FacesStraight},
 		{getPokers(2, 3, 4, 5, 6, 7), consts.FacesInvalid},
 		{getPokers(10, 11, 12, 13, 1, 2), consts.FacesInvalid},
 		{getPokers(3, 3, 4, 4, 5, 5), consts.FacesStraight},
 		{getPokers(3, 3, 3, 4, 4, 4), consts.FacesStraight},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4), consts.FacesStraight},
-		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesStraight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 6), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 6, 6), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 6), consts.FacesInvalid},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 6, 7, 8), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6), consts.FacesInvalid},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 6, 7, 8), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3), consts.FacesBomb},
 		{getPokers(3, 3, 3, 3, 3), consts.FacesBomb},
 		{getPokers(14, 15), consts.FacesBomb},
 		{getPokers(14, 15, 15), consts.FacesBomb},
 		{getPokers(14, 14, 15, 15), consts.FacesBomb},
 		{getPokers(14, 14, 14, 15, 15, 16), consts.FacesInvalid},
-		{getPokers(4, 4, 4, 4, 6, 6, 6, 6), consts.FacesUnion},
+		{getPokers(4, 4, 4, 4, 6, 6, 6, 6), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 7, 7, 7), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 7, 7), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnionStraight},
 	}
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)

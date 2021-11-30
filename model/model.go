@@ -25,9 +25,26 @@ type Poker struct {
 }
 
 type Faces struct {
-	Counts []int            `json:"types"`
-	Score  int64            `json:"score"`
-	Type   consts.FacesType `json:"type"`
+	Keys  []int            `json:"keys"`
+	Score int64            `json:"score"`
+	Type  consts.FacesType `json:"type"`
+	Main  int              `json:"main"`
+	Extra int              `json:"extra"`
+}
+
+func (f *Faces) SetKeys(keys []int) *Faces {
+	f.Keys = keys
+	return f
+}
+
+func (f *Faces) SetMain(main int) *Faces {
+	f.Main = main
+	return f
+}
+
+func (f *Faces) SetExtra(extra int) *Faces {
+	f.Extra = extra
+	return f
 }
 
 func (f *Faces) SetScore(score int64) *Faces {
