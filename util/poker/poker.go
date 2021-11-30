@@ -8,7 +8,7 @@ import (
 )
 
 type Rules interface {
-	Score(key int) int
+	Value(key int) int
 	IsStraight(faces []int, count int) bool
 	StraightBoundary() (int, int)
 }
@@ -84,16 +84,38 @@ func SetValue(pokers model.Pokers, kv map[int]int) {
 }
 
 func ParseFaces(pokers model.Pokers, rules Rules) *model.Faces {
+	faces, err := parseFaces(pokers, rules)
+	if err != nil {
+		return &model.Faces{Type: consts.FacesInvalid}
+	}
+	mapping := map[int]int{}
+	for i := 1; i <= 15; i++ {
+		mapping[rules.Value(i)] = i
+	}
+	keys := make([]int, 0)
+	for _, v := range faces.Values {
+		keys = append(keys, mapping[v])
+	}
+	return faces.SetKeys(keys)
+}
+
+func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
+	if len(pokers) == 0 {
+		return nil, consts.ErrsInvalidFaces
+	}
 	sc, xc, score := 0, 0, int64(0)
 	stats := map[int]int{}
 	group := map[int][]int{}
 	counts := make([]int, 0)
-	keys := make([]int, 0)
+	values := make([]int, 0)
 	for _, poker := range pokers {
-		poker.Val = rules.Score(poker.Key)
-		keys = append(keys, poker.Key)
-		stats[poker.Val]++
+		if poker.Key < 0 || poker.Key > 15 {
+			return nil, consts.ErrsInvalidFaces
+		}
+		poker.Val = rules.Value(poker.Key)
 		score += int64(poker.Val)
+		values = append(values, poker.Val)
+		stats[poker.Val]++
 		if poker.Key == 14 {
 			sc++
 		} else if poker.Key == 15 {
@@ -111,74 +133,71 @@ func ParseFaces(pokers model.Pokers, rules Rules) *model.Faces {
 	for i := 0; i < len(counts)/2; i++ {
 		counts[i], counts[len(counts)-i-1] = counts[len(counts)-i-1], counts[i]
 	}
-	faces := &model.Faces{Keys: keys, Score: score}
-	if len(counts) == 0 {
-		return faces.SetType(consts.FacesInvalid)
-	}
+	faces := &model.Faces{Score: score, Values: values, Type: consts.FacesInvalid}
 	if sc+xc == len(pokers) && sc+xc > 1 {
-		return faces.SetScore(int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000)).SetType(consts.FacesBomb)
-	}
-	if counts[0] == 1 {
+		faces.SetScore(int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000)).SetType(consts.FacesBomb)
+	} else if counts[0] == 1 {
 		if len(group[counts[0]]) == 1 {
-			return faces.SetType(consts.FacesSingle)
+			faces.SetType(consts.FacesSingle)
 		} else if rules.IsStraight(group[counts[0]], counts[0]) {
-			return faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+			faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
 		}
 	} else if counts[0] == 2 && len(counts) == 1 {
 		if len(group[counts[0]]) == 1 {
-			return faces.SetType(consts.FacesDouble)
+			faces.SetType(consts.FacesDouble)
 		} else if rules.IsStraight(group[counts[0]], counts[0]) {
-			return faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+			faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
 		}
 	} else if counts[0] >= 3 {
 		if len(counts) == 1 && len(group[counts[0]]) == 1 {
 			if counts[0] == 3 {
-				return faces.SetType(consts.FacesTriple)
+				faces.SetType(consts.FacesTriple)
 			} else {
-				return faces.SetScore(int64(group[counts[0]][0]*counts[0]) + int64(len(pokers)*1000)).SetType(consts.FacesBomb)
+				faces.SetScore(int64(group[counts[0]][0]*counts[0]) + int64(len(pokers)*1000)).SetType(consts.FacesBomb)
 			}
 		} else if len(counts) == 1 && rules.IsStraight(group[counts[0]], counts[0]) {
 			if counts[0] == 3 {
-				return faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+				faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
 			} else if counts[0] == 4 {
-				keys = make([]int, 0)
+				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
 					for i := 0; i < 3; i++ {
-						keys = append(keys, v)
+						values = append(values, v)
 					}
 				}
 				for _, v := range group[counts[0]] {
 					for i := 0; i < 1; i++ {
-						keys = append(keys, v)
+						values = append(values, v)
 					}
 				}
-				return faces.SetMain(len(group[counts[0]])).SetExtra(1).SetKeys(keys).SetScore(score / 4 * 3).SetType(consts.FacesUnionStraight)
+				faces.SetMain(len(group[counts[0]])).SetExtra(1).SetValues(values).SetScore(score / 4 * 3).SetType(consts.FacesUnionStraight)
 			} else if counts[0] == 5 {
-				keys = make([]int, 0)
+				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
 					for i := 0; i < 3; i++ {
-						keys = append(keys, v)
+						values = append(values, v)
 					}
 				}
 				for _, v := range group[counts[0]] {
 					for i := 0; i < 2; i++ {
-						keys = append(keys, v)
+						values = append(values, v)
 					}
 				}
-				return faces.SetMain(len(group[counts[0]])).SetExtra(1).SetKeys(keys).SetScore(score / 5 * 3).SetType(consts.FacesUnionStraight)
+				faces.SetMain(len(group[counts[0]])).SetExtra(1).SetValues(values).SetScore(score / 5 * 3).SetType(consts.FacesUnionStraight)
 			}
 		} else if len(group[3]) > 0 {
-			faces, err := parseUnionOrStraight(group, rules)
-			if err == nil {
-				return faces
+			var err error
+			faces, err = parseUnionOrStraight(group, rules)
+			if err != nil {
+				return nil, err
 			}
 		} else if counts[0] == 4 && len(counts) == 2 && counts[1] <= 2 {
 			if len(group[counts[0]]) == 1 && ((counts[1] == 2 && len(group[counts[1]]) <= 2) || (counts[1] == 1 && len(group[counts[1]]) == 2)) {
-				return faces.SetMain(len(group[counts[0]])).SetExtra(counts[1]).SetScore(int64(group[counts[0]][0] * counts[0])).SetType(consts.FacesUnion)
+				faces.SetMain(len(group[counts[0]])).SetExtra(counts[1]).SetScore(int64(group[counts[0]][0] * counts[0])).SetType(consts.FacesUnion)
 			}
 		}
 	}
-	return faces.SetType(consts.FacesInvalid)
+	return faces, nil
 }
 
 func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error) {
@@ -214,13 +233,13 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error
 			target = k
 			continue
 		}
-		if v-k >= valid[target]-target && k > target {
+		if v-k > valid[target]-target || (v-k == valid[target]-target && k > target) {
 			target = k
 		}
 	}
 
 	for _, v := range mains {
-		if v < target && v > valid[target] {
+		if v < target || v > valid[target] {
 			extras[v] += 3
 		}
 	}
@@ -252,27 +271,27 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error
 			extras[i] += 3
 		}
 	}
-	keys := make([]int, 0)
+	values := make([]int, 0)
 	arr := make([]int, 0)
 	score := 0
 	main = vr - vl + 1
 	for i := vl; i <= vr; i++ {
 		arr = append(arr, i)
 		for j := 0; j < 3; j++ {
-			keys = append(keys, i)
+			values = append(values, i)
 		}
 		score += 3 * i
 	}
 	for k, v := range extras {
 		for j := 0; j < v; j++ {
-			keys = append(keys, k)
+			values = append(values, k)
 		}
 	}
 	faces := &model.Faces{
-		Keys:  keys,
-		Main:  main,
-		Extra: extra,
-		Score: int64(score),
+		Main:   main,
+		Extra:  extra,
+		Score:  int64(score),
+		Values: values,
 	}
 	if main == 1 {
 		return faces.SetType(consts.FacesUnion), nil
@@ -281,14 +300,11 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error
 }
 
 func isValidUnionStraight(main, extras int, ml, mr, ll, lr int) (bool, int, int) {
-	if main > extras && (main-extras)%3 == 0 {
-		diff := (main - extras) / 3
-		for i := 0; i < diff; i++ {
-			if mr > lr {
-				mr--
-			} else {
-				ml++
-			}
+	for main > extras && (main-1-extras)%3 == 0 {
+		if mr > lr {
+			mr--
+		} else {
+			ml++
 		}
 		main = mr - ml
 		extras = main

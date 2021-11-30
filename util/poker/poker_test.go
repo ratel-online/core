@@ -13,7 +13,7 @@ var defaultRules = _defaultRules{}
 type _defaultRules struct {
 }
 
-func (d _defaultRules) Score(key int) int {
+func (d _defaultRules) Value(key int) int {
 	if key == 1 {
 		return 12
 	} else if key == 2 {
@@ -80,10 +80,12 @@ type parseFacesCase struct {
 	actualType consts.FacesType
 }
 
-func testParseFaces(t *testing.T, pokers model.Pokers, actualType consts.FacesType) {
-	if !assert.Equal(t, ParseFaces(pokers, defaultRules).Type, actualType) {
+func testParseFaces(t *testing.T, pokers model.Pokers, expected consts.FacesType) {
+	faces := ParseFaces(pokers, defaultRules)
+	if !assert.Equal(t, expected, faces.Type) {
 		t.Log("err at", pokers.String())
 	}
+	t.Log(pokers.String(), "->", faces.Keys)
 }
 
 func TestParseFaces(t *testing.T) {
@@ -118,10 +120,13 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(14, 14, 15, 15), consts.FacesBomb},
 		{getPokers(14, 14, 14, 15, 15, 16), consts.FacesInvalid},
 		{getPokers(4, 4, 4, 4, 6, 6, 6, 6), consts.FacesInvalid},
+		{getPokers(4, 4, 4, 16), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 7, 7, 7), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 7, 7), consts.FacesUnionStraight},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10), consts.FacesUnionStraight},
 	}
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)
