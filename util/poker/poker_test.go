@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/ratel-online/core/consts"
 	"github.com/ratel-online/core/model"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -81,11 +80,21 @@ type parseFacesCase struct {
 }
 
 func testParseFaces(t *testing.T, pokers model.Pokers, expected consts.FacesType) {
-	faces := ParseFaces(pokers, defaultRules)
-	if !assert.Equal(t, expected, faces.Type) {
-		t.Log("err at", pokers.String())
+	list := ParseFaces(pokers, defaultRules)
+	if expected == consts.FacesInvalid && len(list) > 0 {
+		t.Error("err at", pokers.String())
+		return
 	}
-	t.Log(pokers.String(), "->", faces.Keys)
+	access := false
+	for _, faces := range list {
+		if expected == faces.Type {
+			t.Log(pokers.String(), "->", faces.Keys)
+			access = true
+		}
+	}
+	if !access {
+		t.Error("err at", pokers.String())
+	}
 }
 
 func TestParseFaces(t *testing.T) {
@@ -94,11 +103,11 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(15), consts.FacesSingle},
 		{getPokers(3, 3), consts.FacesDouble},
 		{getPokers(3, 3, 3), consts.FacesTriple},
-		{getPokers(3, 3, 3, 4), consts.FacesUnion},
-		{getPokers(3, 3, 3, 4, 4), consts.FacesUnion},
+		{getPokers(3, 3, 3, 4), consts.FacesUnion3},
+		{getPokers(3, 3, 3, 4, 4), consts.FacesUnion3},
 		{getPokers(3, 3, 3, 4, 4, 5), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3, 4), consts.FacesInvalid},
-		{getPokers(3, 3, 3, 3, 4, 5), consts.FacesUnion},
+		{getPokers(3, 3, 3, 3, 4, 5), consts.FacesUnion4},
 		{getPokers(3, 3, 3, 3, 3, 4, 5), consts.FacesInvalid},
 		{getPokers(3, 4, 5, 6, 7), consts.FacesStraight},
 		{getPokers(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1), consts.FacesStraight},
@@ -106,10 +115,10 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(10, 11, 12, 13, 1, 2), consts.FacesInvalid},
 		{getPokers(3, 3, 4, 4, 5, 5), consts.FacesStraight},
 		{getPokers(3, 3, 3, 4, 4, 4), consts.FacesStraight},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 4, 4, 4, 5, 6), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 6, 6), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 6), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 6, 6), consts.FacesUnion3Straight},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 6), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6), consts.FacesInvalid},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 6, 7, 8), consts.FacesInvalid},
@@ -121,12 +130,14 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(14, 14, 14, 15, 15, 16), consts.FacesInvalid},
 		{getPokers(4, 4, 4, 4, 6, 6, 6, 6), consts.FacesInvalid},
 		{getPokers(4, 4, 4, 16), consts.FacesInvalid},
-		{getPokers(3, 3, 3, 4, 4, 4, 5, 5), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 7, 7, 7), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 7, 7), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnionStraight},
-		{getPokers(3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10), consts.FacesUnionStraight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 7, 7, 7), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 7, 7), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 4, 3, 3, 4, 4, 4, 5, 5, 5, 5), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8), consts.FacesUnion3Straight},
 	}
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)
@@ -156,11 +167,14 @@ func TestParseFacesScore(t *testing.T) {
 	}
 	preScore := int64(-1)
 	for _, testCase := range testCases {
-		faces := ParseFaces(testCase.pokers, defaultRules)
-		if faces.Score < preScore {
-			t.Error(fmt.Sprintf("err score, pre %v should lt %v", preScore, faces.Score))
+		list := ParseFaces(testCase.pokers, defaultRules)
+		if len(list) > 0 {
+			faces := list[0]
+			if faces.Score < preScore {
+				t.Error(fmt.Sprintf("err score, pre %v should lt %v", preScore, faces.Score))
+			}
+			preScore = faces.Score
+			t.Log(testCase.pokers.String(), faces.Score)
 		}
-		preScore = faces.Score
-		t.Log(testCase.pokers.String(), faces.Score)
 	}
 }

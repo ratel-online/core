@@ -83,25 +83,28 @@ func SetValue(pokers model.Pokers, kv map[int]int) {
 	}
 }
 
-func ParseFaces(pokers model.Pokers, rules Rules) *model.Faces {
-	faces, err := parseFaces(pokers, rules)
-	if err != nil {
-		return &model.Faces{Type: consts.FacesInvalid}
+func ParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
+	list := parseFaces(pokers, rules)
+	if len(list) == 0 {
+		return list
 	}
 	mapping := map[int]int{}
 	for i := 1; i <= 15; i++ {
 		mapping[rules.Value(i)] = i
 	}
-	keys := make([]int, 0)
-	for _, v := range faces.Values {
-		keys = append(keys, mapping[v])
+	for i, faces := range list {
+		keys := make([]int, 0)
+		for _, v := range faces.Values {
+			keys = append(keys, mapping[v])
+		}
+		list[i].Keys = keys
 	}
-	return faces.SetKeys(keys)
+	return list
 }
 
-func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
+func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 	if len(pokers) == 0 {
-		return nil, consts.ErrsInvalidFaces
+		return nil
 	}
 	sc, xc, score := 0, 0, int64(0)
 	stats := map[int]int{}
@@ -110,7 +113,7 @@ func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
 	values := make([]int, 0)
 	for _, poker := range pokers {
 		if poker.Key < 0 || poker.Key > 15 {
-			return nil, consts.ErrsInvalidFaces
+			return nil
 		}
 		poker.Val = rules.Value(poker.Key)
 		score += int64(poker.Val)
@@ -133,31 +136,31 @@ func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
 	for i := 0; i < len(counts)/2; i++ {
 		counts[i], counts[len(counts)-i-1] = counts[len(counts)-i-1], counts[i]
 	}
-	faces := &model.Faces{Score: score, Values: values, Type: consts.FacesInvalid}
+	list := make([]model.Faces, 0)
 	if sc+xc == len(pokers) && sc+xc > 1 {
-		faces.SetScore(int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000)).SetType(consts.FacesBomb)
+		list = append(list, model.Faces{Values: values, Score: int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000), Type: consts.FacesBomb})
 	} else if counts[0] == 1 {
 		if len(group[counts[0]]) == 1 {
-			faces.SetType(consts.FacesSingle)
+			list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesSingle})
 		} else if rules.IsStraight(group[counts[0]], counts[0]) {
-			faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+			list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
 		}
 	} else if counts[0] == 2 && len(counts) == 1 {
 		if len(group[counts[0]]) == 1 {
-			faces.SetType(consts.FacesDouble)
+			list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesDouble})
 		} else if rules.IsStraight(group[counts[0]], counts[0]) {
-			faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+			list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
 		}
 	} else if counts[0] >= 3 {
 		if len(counts) == 1 && len(group[counts[0]]) == 1 {
 			if counts[0] == 3 {
-				faces.SetType(consts.FacesTriple)
+				list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesTriple})
 			} else {
-				faces.SetScore(int64(group[counts[0]][0]*counts[0]) + int64(len(pokers)*1000)).SetType(consts.FacesBomb)
+				list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0]*counts[0]) + int64(len(pokers)*1000), Type: consts.FacesBomb})
 			}
 		} else if len(counts) == 1 && rules.IsStraight(group[counts[0]], counts[0]) {
 			if counts[0] == 3 {
-				faces.SetMain(len(group[counts[0]])).SetType(consts.FacesStraight)
+				list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
 			} else if counts[0] == 4 {
 				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
@@ -170,7 +173,7 @@ func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
 						values = append(values, v)
 					}
 				}
-				faces.SetMain(len(group[counts[0]])).SetExtra(1).SetValues(values).SetScore(score / 4 * 3).SetType(consts.FacesUnionStraight)
+				list = append(list, model.Faces{Values: values, Score: score / 4 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
 			} else if counts[0] == 5 {
 				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
@@ -183,24 +186,21 @@ func parseFaces(pokers model.Pokers, rules Rules) (*model.Faces, error) {
 						values = append(values, v)
 					}
 				}
-				faces.SetMain(len(group[counts[0]])).SetExtra(1).SetValues(values).SetScore(score / 5 * 3).SetType(consts.FacesUnionStraight)
+				list = append(list, model.Faces{Values: values, Score: score / 5 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
 			}
 		} else if len(group[3]) > 0 {
-			var err error
-			faces, err = parseUnionOrStraight(group, rules)
-			if err != nil {
-				return nil, err
-			}
+			list = parseUnionOrStraight(group, rules)
 		} else if counts[0] == 4 && len(counts) == 2 && counts[1] <= 2 {
 			if len(group[counts[0]]) == 1 && ((counts[1] == 2 && len(group[counts[1]]) <= 2) || (counts[1] == 1 && len(group[counts[1]]) == 2)) {
-				faces.SetMain(len(group[counts[0]])).SetExtra(counts[1]).SetScore(int64(group[counts[0]][0] * counts[0])).SetType(consts.FacesUnion)
+				list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0] * counts[0]), Main: len(group[counts[0]]), Extra: counts[1], Type: consts.FacesUnion4})
 			}
 		}
 	}
-	return faces, nil
+	return list
 }
 
-func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error) {
+func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
+	list := make([]model.Faces, 0)
 	extras := map[int]int{}
 	mains := make([]int, 0)
 	for k, arr := range group {
@@ -252,51 +252,65 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) (*model.Faces, error
 		double += v / 2
 	}
 
-	extra = 1
-	access, vl, vr := isValidUnionStraight(main, single, ml, mr, ll, lr)
-	if !access && single-double*2 == 0 {
-		extra = 2
-		access, vl, vr = isValidUnionStraight(main, double, ml, mr, ll, lr)
-	}
-	if !access {
-		return nil, consts.ErrsInvalidFaces
-	}
-	if vl > ml {
-		for i := ll; i < vl; i++ {
-			extras[i] += 3
+	access, vl, vr := false, 0, 0
+	for extra = 1; extra <= 2; extra++ {
+		if extra == 1 {
+			access, vl, vr = isValidUnionStraight(main, single, ml, mr, ll, lr)
+		} else if extra == 2 && single-double*2 == 0 {
+			access, vl, vr = isValidUnionStraight(main, double, ml, mr, ll, lr)
+		}
+		if access {
+			if vl > ml {
+				for i := ll; i < vl; i++ {
+					extras[i] += 3
+				}
+			}
+			if vr < mr {
+				for i := vr + 1; i <= mr; i++ {
+					extras[i] += 3
+				}
+			}
+			values := make([]int, 0)
+			arr := make([]int, 0)
+			score := 0
+			main = vr - vl + 1
+			for i := vl; i <= vr; i++ {
+				arr = append(arr, i)
+				for j := 0; j < 3; j++ {
+					values = append(values, i)
+				}
+				score += 3 * i
+			}
+			for k, v := range extras {
+				for j := 0; j < v; j++ {
+					values = append(values, k)
+				}
+			}
+			faces := model.Faces{
+				Main:   main,
+				Extra:  extra,
+				Score:  int64(score),
+				Values: values,
+			}
+			if main == 1 {
+				faces.SetType(consts.FacesUnion3)
+			} else {
+				faces.SetType(consts.FacesUnion3Straight)
+			}
+			if vl > ml {
+				for i := ll; i < vl; i++ {
+					extras[i] -= 3
+				}
+			}
+			if vr < mr {
+				for i := vr + 1; i <= mr; i++ {
+					extras[i] -= 3
+				}
+			}
+			list = append(list, faces)
 		}
 	}
-	if vr < mr {
-		for i := vr + 1; i <= mr; i++ {
-			extras[i] += 3
-		}
-	}
-	values := make([]int, 0)
-	arr := make([]int, 0)
-	score := 0
-	main = vr - vl + 1
-	for i := vl; i <= vr; i++ {
-		arr = append(arr, i)
-		for j := 0; j < 3; j++ {
-			values = append(values, i)
-		}
-		score += 3 * i
-	}
-	for k, v := range extras {
-		for j := 0; j < v; j++ {
-			values = append(values, k)
-		}
-	}
-	faces := &model.Faces{
-		Main:   main,
-		Extra:  extra,
-		Score:  int64(score),
-		Values: values,
-	}
-	if main == 1 {
-		return faces.SetType(consts.FacesUnion), nil
-	}
-	return faces.SetType(consts.FacesUnionStraight), nil
+	return list
 }
 
 func isValidUnionStraight(main, extras int, ml, mr, ll, lr int) (bool, int, int) {
