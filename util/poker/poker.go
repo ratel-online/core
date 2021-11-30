@@ -3,6 +3,7 @@ package poker
 import (
 	"github.com/ratel-online/core/consts"
 	"github.com/ratel-online/core/model"
+	"github.com/ratel-online/core/util/arrays"
 	"github.com/ratel-online/core/util/strings"
 	"sort"
 )
@@ -164,27 +165,19 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 			} else if counts[0] == 4 {
 				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
-					for i := 0; i < 3; i++ {
-						values = append(values, v)
-					}
+					values = arrays.AppendN(values, v, 3)
 				}
 				for _, v := range group[counts[0]] {
-					for i := 0; i < 1; i++ {
-						values = append(values, v)
-					}
+					values = append(values, v)
 				}
 				list = append(list, model.Faces{Values: values, Score: score / 4 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
 			} else if counts[0] == 5 {
 				values = make([]int, 0)
 				for _, v := range group[counts[0]] {
-					for i := 0; i < 3; i++ {
-						values = append(values, v)
-					}
+					values = arrays.AppendN(values, v, 3)
 				}
 				for _, v := range group[counts[0]] {
-					for i := 0; i < 2; i++ {
-						values = append(values, v)
-					}
+					values = arrays.AppendN(values, v, 2)
 				}
 				list = append(list, model.Faces{Values: values, Score: score / 5 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
 			}
@@ -201,17 +194,17 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 
 func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
 	list := make([]model.Faces, 0)
-	extras := map[int]int{}
+	extras := make([]int, 0)
 	mains := make([]int, 0)
 	for k, arr := range group {
 		for _, v := range arr {
 			if k > 3 {
-				extras[v] += k - 3
+				extras = arrays.AppendN(extras, v, k-3)
 				mains = append(mains, v)
 			} else if k == 3 {
 				mains = append(mains, v)
 			} else if k < 3 {
-				extras[v] += k
+				extras = arrays.AppendN(extras, v, k)
 			}
 		}
 	}
@@ -240,51 +233,28 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
 
 	for _, v := range mains {
 		if v < target || v > valid[target] {
-			extras[v] += 3
+			extras = arrays.AppendN(extras, v, 3)
 		}
 	}
 
 	ml, mr := target, valid[target]
 	ll, lr := rules.StraightBoundary()
-	main, extra, single, double := mr-ml+1, 0, 0, 0
-	for _, v := range extras {
-		single += v
-		double += v / 2
-	}
-
-	access, vl, vr := false, 0, 0
-	for extra = 1; extra <= 2; extra++ {
-		if extra == 1 {
-			access, vl, vr = isValidUnionStraight(main, single, ml, mr, ll, lr)
-		} else if extra == 2 && single-double*2 == 0 {
-			access, vl, vr = isValidUnionStraight(main, double, ml, mr, ll, lr)
-		}
+	main := mr - ml + 1
+	for extra := 1; extra <= 2; extra++ {
+		tmpExtras := make([]int, len(extras))
+		copy(tmpExtras, extras)
+		access, vl, vr, tmpExtras := isValidUnionStraight(main, extra, tmpExtras, ml, mr, ll, lr)
 		if access {
-			if vl > ml {
-				for i := ll; i < vl; i++ {
-					extras[i] += 3
-				}
-			}
-			if vr < mr {
-				for i := vr + 1; i <= mr; i++ {
-					extras[i] += 3
-				}
-			}
 			values := make([]int, 0)
-			arr := make([]int, 0)
 			score := 0
 			main = vr - vl + 1
 			for i := vl; i <= vr; i++ {
-				arr = append(arr, i)
-				for j := 0; j < 3; j++ {
-					values = append(values, i)
-				}
+				values = arrays.AppendN(values, i, 3)
 				score += 3 * i
 			}
-			for k, v := range extras {
-				for j := 0; j < v; j++ {
-					values = append(values, k)
-				}
+			sort.Ints(tmpExtras)
+			for _, v := range tmpExtras {
+				values = append(values, v)
 			}
 			faces := model.Faces{
 				Main:   main,
@@ -297,31 +267,53 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
 			} else {
 				faces.SetType(consts.FacesUnion3Straight)
 			}
-			if vl > ml {
-				for i := ll; i < vl; i++ {
-					extras[i] -= 3
-				}
-			}
-			if vr < mr {
-				for i := vr + 1; i <= mr; i++ {
-					extras[i] -= 3
-				}
-			}
 			list = append(list, faces)
 		}
 	}
 	return list
 }
 
-func isValidUnionStraight(main, extras int, ml, mr, ll, lr int) (bool, int, int) {
-	for main > extras && (main-1-extras)%3 == 0 {
+func isValidUnionStraight(main, extra int, extras []int, ml, mr, ll, lr int) (bool, int, int, []int) {
+	if extra == 2 {
+		counts := map[int]int{}
+		for _, v := range extras {
+			counts[v]++
+		}
+		single := map[int]bool{}
+		for k, v := range counts {
+			if v%2 == 1 {
+				single[k] = true
+			}
+		}
+		for len(single) > 0 {
+			if single[mr] {
+				extras = arrays.AppendN(extras, mr, 3)
+				delete(single, mr)
+				mr--
+			} else if single[ml] {
+				extras = arrays.AppendN(extras, ml, 3)
+				delete(single, ml)
+				ml++
+			} else {
+				return false, ml, mr, extras
+			}
+		}
+		if len(extras)%2 != 0 {
+			return false, ml, mr, extras
+		}
+		main = mr - ml + 1
+		return main == len(extras)/2 && ml >= ll && mr <= lr, ml, mr, extras
+	}
+
+	for main > len(extras) && (main-1-len(extras))%3 == 0 {
 		if mr > lr {
+			extras = arrays.AppendN(extras, mr, 3)
 			mr--
 		} else {
+			extras = arrays.AppendN(extras, ml, 3)
 			ml++
 		}
-		main = mr - ml
-		extras = main
+		main = mr - ml + 1
 	}
-	return main == extras && ml >= ll && mr <= lr, ml, mr
+	return main == len(extras) && ml >= ll && mr <= lr, ml, mr, extras
 }

@@ -82,18 +82,19 @@ type parseFacesCase struct {
 func testParseFaces(t *testing.T, pokers model.Pokers, expected consts.FacesType) {
 	list := ParseFaces(pokers, defaultRules)
 	if expected == consts.FacesInvalid && len(list) > 0 {
-		t.Error("err at", pokers.String())
+		t.Error("err at", pokers.String(), "expected invalid", "actual ", list[0].Values)
 		return
 	}
 	access := false
+	t.Log(pokers.String())
 	for _, faces := range list {
 		if expected == faces.Type {
-			t.Log(pokers.String(), "->", faces.Keys)
+			t.Log("\t\t->", faces.Keys)
 			access = true
 		}
 	}
-	if !access {
-		t.Error("err at", pokers.String())
+	if !access && expected != consts.FacesInvalid {
+		t.Error("err at", pokers.String(), "expected ", expected, "actual ", list[0].Values)
 	}
 }
 
@@ -138,6 +139,11 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10), consts.FacesUnion3Straight},
 		{getPokers(3, 3, 3, 3, 3, 4, 4, 4, 4, 4), consts.FacesUnion3Straight},
 		{getPokers(3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 4, 4, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 9), consts.FacesUnion3Straight},
+		{getPokers(3, 3, 3, 3, 3, 4, 4, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 9), consts.FacesInvalid},
 	}
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)
