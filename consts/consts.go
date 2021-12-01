@@ -2,6 +2,8 @@ package consts
 
 import "errors"
 
+const IS = "INTERACTIVE_SIGNAL"
+
 type FacesType int
 
 const (
