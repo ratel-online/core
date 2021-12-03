@@ -15,3 +15,12 @@ func Contains(arr []int, target int) bool {
 	}
 	return false
 }
+
+func IndexOf(arr []int64, v int64) int {
+	for i, a := range arr {
+		if a == v {
+			return i
+		}
+	}
+	return -1
+}

@@ -12,6 +12,7 @@ type Rules interface {
 	Value(key int) int
 	IsStraight(faces []int, count int) bool
 	StraightBoundary() (int, int)
+	Reserved() bool
 }
 
 var base = make(model.Pokers, 0)
@@ -46,7 +47,7 @@ func desc(k int) string {
 	}
 }
 
-func Distribute(number int, reserved bool) []model.Pokers {
+func Distribute(number int, rules Rules) []model.Pokers {
 	sets := number / 3
 	if number%3 > 0 {
 		sets++
@@ -55,10 +56,13 @@ func Distribute(number int, reserved bool) []model.Pokers {
 	for i := 0; i < sets; i++ {
 		pokers = append(pokers, base...)
 	}
+	for i := range pokers {
+		pokers[i].Val = rules.Value(pokers[i].Key)
+	}
 	pokers.Shuffle()
 	size := len(pokers)
 	reserve := 0
-	if reserved {
+	if rules.Reserved() {
 		if size%number == 0 {
 			reserve = number * sets
 		} else {
@@ -74,6 +78,9 @@ func Distribute(number int, reserved bool) []model.Pokers {
 	}
 	if reserve > 0 {
 		pokersArr = append(pokersArr, pokers[size-reserve:])
+	}
+	for i := range pokersArr {
+		pokersArr[i].SortByValue()
 	}
 	return pokersArr
 }

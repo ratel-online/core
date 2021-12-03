@@ -44,6 +44,10 @@ func (d _defaultRules) StraightBoundary() (int, int) {
 	return 1, 12
 }
 
+func (d _defaultRules) Reserved() bool {
+	return true
+}
+
 func getPokers(keys ...int) model.Pokers {
 	pokers := make(model.Pokers, 0)
 	for _, k := range keys {
@@ -57,17 +61,17 @@ func getPokers(keys ...int) model.Pokers {
 }
 
 func TestDistribute(t *testing.T) {
-	pokersArr := Distribute(3, true)
+	pokersArr := Distribute(3, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
 	}
-	pokersArr = Distribute(5, true)
+	pokersArr = Distribute(5, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
 	}
-	pokersArr = Distribute(7, false)
+	pokersArr = Distribute(7, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
