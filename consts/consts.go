@@ -1,7 +1,5 @@
 package consts
 
-import "errors"
-
 const IS = "INTERACTIVE_SIGNAL"
 
 type FacesType int
@@ -17,8 +15,4 @@ const (
 	FacesStraight                 = 7
 	FacesUnion3Straight           = 8
 	FacesInvalid                  = 9
-)
-
-var (
-	ErrsInvalidFaces = errors.New("Invalid faces. ")
 )

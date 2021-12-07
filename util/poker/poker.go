@@ -4,7 +4,6 @@ import (
 	"github.com/ratel-online/core/consts"
 	"github.com/ratel-online/core/model"
 	"github.com/ratel-online/core/util/arrays"
-	"github.com/ratel-online/core/util/strings"
 	"sort"
 )
 
@@ -13,38 +12,6 @@ type Rules interface {
 	IsStraight(faces []int, count int) bool
 	StraightBoundary() (int, int)
 	Reserved() bool
-}
-
-var base = make(model.Pokers, 0)
-
-func init() {
-	for k := 1; k <= 13; k++ {
-		for t := 1; t <= 4; t++ {
-			base = append(base, model.Poker{Key: k, Val: 0, Type: t, Desc: desc(k)})
-		}
-	}
-	for k := 16; k <= 17; k++ {
-		base = append(base, model.Poker{Key: k, Val: 0, Type: 1, Desc: desc(k)})
-	}
-}
-
-func desc(k int) string {
-	switch k {
-	case 1:
-		return "A"
-	case 11:
-		return "J"
-	case 12:
-		return "Q"
-	case 13:
-		return "K"
-	case 14:
-		return "S"
-	case 15:
-		return "X"
-	default:
-		return strings.String(k)
-	}
 }
 
 func Distribute(number int, rules Rules) []model.Pokers {

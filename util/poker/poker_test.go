@@ -53,7 +53,7 @@ func getPokers(keys ...int) model.Pokers {
 	for _, k := range keys {
 		pokers = append(pokers, model.Poker{
 			Key:  k,
-			Desc: desc(k),
+			Desc: desc[k],
 			Type: 1,
 		})
 	}
