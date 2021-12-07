@@ -63,6 +63,16 @@ func (f *Faces) SetType(t consts.FacesType) *Faces {
 	return f
 }
 
+func (f *Faces) Compare(lastFaces *Faces) bool {
+	if f.Type == consts.FacesBomb {
+		return f.Score > lastFaces.Score
+	}
+	if f.Type != lastFaces.Type {
+		return false
+	}
+	return f.Score > lastFaces.Score && f.Main == lastFaces.Main && f.Extra == lastFaces.Extra
+}
+
 func (pokers Pokers) Shuffle() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	l := len(pokers)
@@ -89,8 +99,11 @@ func (pokers Pokers) SortByValue() {
 
 func (pokers Pokers) String() string {
 	buf := bytes.Buffer{}
-	for _, poker := range pokers {
-		buf.WriteString(fmt.Sprintf("%v ", poker.Key))
+	for i, poker := range pokers {
+		buf.WriteString(fmt.Sprintf("%v", poker.Desc))
+		if i != len(pokers)-1 {
+			buf.WriteString(" ")
+		}
 	}
 	return buf.String()
 }

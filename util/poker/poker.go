@@ -41,10 +41,12 @@ func Distribute(number int, rules Rules) []model.Pokers {
 	avgNum := (size - reserve) / number
 	pokersArr := make([]model.Pokers, 0)
 	for i := 0; i < number; i++ {
-		pokersArr = append(pokersArr, pokers[i*avgNum:(i+1)*avgNum])
+		pokerArr := make([]model.Poker, 0)
+		pokersArr = append(pokersArr, append(pokerArr, pokers[i*avgNum:(i+1)*avgNum]...))
 	}
 	if reserve > 0 {
-		pokersArr = append(pokersArr, pokers[size-reserve:])
+		pokerArr := make([]model.Poker, 0)
+		pokersArr = append(pokersArr, append(pokerArr, pokers[size-reserve:]...))
 	}
 	for i := range pokersArr {
 		pokersArr[i].SortByValue()

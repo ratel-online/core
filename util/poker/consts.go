@@ -38,6 +38,7 @@ func init() {
 			keysAlias[k] = []string{"x", "X"}
 		default:
 			desc[k] = strings.String(k)
+			keysAlias[k] = []string{strings.String(k)}
 		}
 	}
 	for k, aliases := range keysAlias {
