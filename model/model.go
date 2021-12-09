@@ -63,7 +63,7 @@ func (f *Faces) SetType(t consts.FacesType) *Faces {
 	return f
 }
 
-func (f *Faces) Compare(lastFaces *Faces) bool {
+func (f Faces) Compare(lastFaces Faces) bool {
 	if f.Type == consts.FacesBomb {
 		return f.Score > lastFaces.Score
 	}

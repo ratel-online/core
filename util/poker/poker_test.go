@@ -148,6 +148,7 @@ func TestParseFaces(t *testing.T) {
 		{getPokers(3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8), consts.FacesUnion3Straight},
 		{getPokers(3, 3, 3, 3, 4, 4, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 9), consts.FacesUnion3Straight},
 		{getPokers(3, 3, 3, 3, 3, 4, 4, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 9), consts.FacesInvalid},
+		{getPokers(3, 2, 2, 2, 3), consts.FacesUnion3},
 	}
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)

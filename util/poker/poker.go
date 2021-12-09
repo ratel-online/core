@@ -250,6 +250,7 @@ func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
 }
 
 func isValidUnionStraight(main, extra int, extras []int, ml, mr, ll, lr int) (bool, int, int, []int) {
+	access := false
 	if extra == 2 {
 		counts := map[int]int{}
 		for _, v := range extras {
@@ -278,18 +279,22 @@ func isValidUnionStraight(main, extra int, extras []int, ml, mr, ll, lr int) (bo
 			return false, ml, mr, extras
 		}
 		main = mr - ml + 1
-		return main == len(extras)/2 && ml >= ll && mr <= lr, ml, mr, extras
-	}
-
-	for main > len(extras) && (main-1-len(extras))%3 == 0 {
-		if mr > lr {
-			extras = arrays.AppendN(extras, mr, 3)
-			mr--
-		} else {
-			extras = arrays.AppendN(extras, ml, 3)
-			ml++
+		access = main == len(extras)/2
+	} else {
+		for main > len(extras) && (main-1-len(extras))%3 == 0 {
+			if mr > lr {
+				extras = arrays.AppendN(extras, mr, 3)
+				mr--
+			} else {
+				extras = arrays.AppendN(extras, ml, 3)
+				ml++
+			}
+			main = mr - ml + 1
 		}
-		main = mr - ml + 1
+		access = main == len(extras)
 	}
-	return main == len(extras) && ml >= ll && mr <= lr, ml, mr, extras
+	if main > 1 {
+		access = access && ml >= ll && mr <= lr
+	}
+	return access, ml, mr, extras
 }
