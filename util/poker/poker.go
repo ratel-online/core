@@ -4,7 +4,9 @@ import (
 	"github.com/ratel-online/core/consts"
 	"github.com/ratel-online/core/model"
 	"github.com/ratel-online/core/util/arrays"
+	"math/rand"
 	"sort"
+	"time"
 )
 
 type Rules interface {
@@ -14,7 +16,7 @@ type Rules interface {
 	Reserved() bool
 }
 
-func Distribute(number int, rules Rules) []model.Pokers {
+func Distribute(number int, rules Rules) ([]model.Pokers, int) {
 	sets := number / 3
 	if number%3 > 0 {
 		sets++
@@ -51,7 +53,7 @@ func Distribute(number int, rules Rules) []model.Pokers {
 	for i := range pokersArr {
 		pokersArr[i].SortByValue()
 	}
-	return pokersArr
+	return pokersArr, sets
 }
 
 func SetValue(pokers model.Pokers, kv map[int]int) {
@@ -297,4 +299,33 @@ func isValidUnionStraight(main, extra int, extras []int, ml, mr, ll, lr int) (bo
 		access = access && ml >= ll && mr <= lr
 	}
 	return access, ml, mr, extras
+}
+
+// Random random to get a poker, if exclude is not empty, will skip excluded keys.
+func Random(exclude ...int) int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	times := 0
+	for {
+		times++
+		k := r.Intn(15) + 1
+		if !arrays.Contains(exclude, k) {
+			return k
+		}
+		if times > 64 {
+			// impossibility
+			return k
+		}
+	}
+}
+
+func GetPokers(keys ...int) model.Pokers {
+	pokers := make(model.Pokers, 0)
+	for _, k := range keys {
+		pokers = append(pokers, model.Poker{
+			Key:  k,
+			Desc: desc[k],
+			Type: 1,
+		})
+	}
+	return pokers
 }

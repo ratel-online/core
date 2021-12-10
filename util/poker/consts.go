@@ -66,3 +66,7 @@ func GetAlias(key int) string {
 	}
 	return ""
 }
+
+func GetDesc(key int) string {
+	return desc[key]
+}

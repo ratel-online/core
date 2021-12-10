@@ -61,17 +61,17 @@ func getPokers(keys ...int) model.Pokers {
 }
 
 func TestDistribute(t *testing.T) {
-	pokersArr := Distribute(3, defaultRules)
+	pokersArr, _ := Distribute(3, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
 	}
-	pokersArr = Distribute(5, defaultRules)
+	pokersArr, _ = Distribute(5, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
 	}
-	pokersArr = Distribute(7, defaultRules)
+	pokersArr, _ = Distribute(7, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
@@ -188,4 +188,22 @@ func TestParseFacesScore(t *testing.T) {
 			t.Log(testCase.pokers.String(), faces.Score)
 		}
 	}
+}
+
+func TestSort(t *testing.T) {
+	pokers := getPokers(3, 8, 9)
+	for i := range pokers {
+		pokers[i].Val = defaultRules.Value(pokers[i].Key)
+	}
+	pokers.SetOaa(8, 9)
+	pokers.SortByOaaValue()
+	t.Log(pokers.String())
+
+	pokers = getPokers(2, 5, 4, 9, 8)
+	for i := range pokers {
+		pokers[i].Val = defaultRules.Value(pokers[i].Key)
+	}
+	pokers.SetOaa(8, 9)
+	pokers.SortByOaaValue()
+	t.Log(pokers.String())
 }

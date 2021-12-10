@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/ratel-online/core/consts"
+	"github.com/ratel-online/core/util/arrays"
 	"math/rand"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -22,6 +24,7 @@ type Poker struct {
 	Val  int    `json:"val"`
 	Type int    `json:"type"`
 	Desc string `json:"desc"`
+	OAA  bool   `json:"oaa"`
 }
 
 type Faces struct {
@@ -63,6 +66,14 @@ func (f *Faces) SetType(t consts.FacesType) *Faces {
 	return f
 }
 
+func (f *Faces) Hash() string {
+	buf := bytes.Buffer{}
+	for _, k := range f.Keys {
+		buf.WriteString(strconv.Itoa(k))
+	}
+	return buf.String()
+}
+
 func (f Faces) Compare(lastFaces Faces) bool {
 	if f.Type == consts.FacesBomb {
 		return f.Score > lastFaces.Score
@@ -97,11 +108,40 @@ func (pokers Pokers) SortByValue() {
 	})
 }
 
+func (pokers Pokers) SetOaa(oaa ...int) {
+	for i := range pokers {
+		if arrays.Contains(oaa, pokers[i].Key) {
+			pokers[i].OAA = true
+		}
+	}
+}
+
+func (pokers Pokers) SortByOaaValue() {
+	sort.Slice(pokers, func(i, j int) bool {
+		if pokers[i].OAA == pokers[j].OAA {
+			return pokers[i].Val < pokers[j].Val
+		} else if pokers[i].OAA {
+			return false
+		} else {
+			return true
+		}
+	})
+}
+
 func (pokers Pokers) String() string {
+	return pokers.OaaString()
+}
+
+func (pokers Pokers) OaaString() string {
 	buf := bytes.Buffer{}
-	for i, poker := range pokers {
-		buf.WriteString(fmt.Sprintf("%v", poker.Desc))
-		if i != len(pokers)-1 {
+	for i := len(pokers) - 1; i >= 0; i-- {
+		poker := pokers[i]
+		flag := ""
+		if poker.OAA {
+			flag = "*"
+		}
+		buf.WriteString(fmt.Sprintf("%s%v", flag, poker.Desc))
+		if i != 0 {
 			buf.WriteString(" ")
 		}
 	}
