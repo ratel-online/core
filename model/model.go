@@ -1,149 +1,61 @@
 package model
 
-import (
-	"bytes"
-	"fmt"
-	"github.com/ratel-online/core/consts"
-	"github.com/ratel-online/core/util/arrays"
-	"math/rand"
-	"sort"
-	"strconv"
-	"time"
-)
-
 type AuthInfo struct {
 	ID    int64  `json:"id"`
 	Name  string `json:"name"`
 	Score int64  `json:"score"`
 }
 
-type Pokers []Poker
-
-type Poker struct {
-	Key  int    `json:"key"`
-	Val  int    `json:"val"`
-	Type int    `json:"type"`
-	Desc string `json:"desc"`
-	OAA  bool   `json:"oaa"`
+type Message struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
-type Faces struct {
-	Keys   []int            `json:"keys"`
-	Values []int            `json:"values"`
-	Score  int64            `json:"score"`
-	Type   consts.FacesType `json:"type"`
-	Main   int              `json:"main"`
-	Extra  int              `json:"extra"`
+type Player struct {
+	ID     int64  `json:"id"`
+	Name   string `json:"name"`
+	Score  string `json:"score"`
+	Group  int    `json:"group"`
+	Pokers int    `json:"pokers"`
 }
 
-func (f *Faces) SetValues(values []int) *Faces {
-	f.Values = values
-	return f
+type Room struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	Type      int64  `json:"type"`
+	TypeDesc  string `json:"typeDesc"`
+	Players   int    `json:"players"`
+	State     int    `json:"state"`
+	StateDesc string `json:"stateDesc"`
+	Creator   int64  `json:"creator"`
 }
 
-func (f *Faces) SetKeys(keys []int) *Faces {
-	f.Keys = keys
-	return f
+type RoomList struct {
+	Message
+	Rooms []Room `json:"rooms"`
 }
 
-func (f *Faces) SetMain(main int) *Faces {
-	f.Main = main
-	return f
+type RoomInfo struct {
+	Message
+	Room   Room     `json:"room"`
+	Player []Player `json:"player"`
 }
 
-func (f *Faces) SetExtra(extra int) *Faces {
-	f.Extra = extra
-	return f
+type RoomEvent struct {
+	Message
+	Room   Room   `json:"room"`
+	Player Player `json:"player"`
 }
 
-func (f *Faces) SetScore(score int64) *Faces {
-	f.Score = score
-	return f
+type Play struct {
+	Message
+	Player Player `json:"player"`
+	Pokers Pokers `json:"pokers"`
 }
 
-func (f *Faces) SetType(t consts.FacesType) *Faces {
-	f.Type = t
-	return f
-}
-
-func (f *Faces) Hash() string {
-	buf := bytes.Buffer{}
-	for _, k := range f.Keys {
-		buf.WriteString(strconv.Itoa(k))
-	}
-	return buf.String()
-}
-
-func (f Faces) Compare(lastFaces Faces) bool {
-	if f.Type == consts.FacesBomb {
-		return f.Score > lastFaces.Score
-	}
-	if f.Type != lastFaces.Type {
-		return false
-	}
-	return f.Score > lastFaces.Score && f.Main == lastFaces.Main && f.Extra == lastFaces.Extra
-}
-
-func (pokers Pokers) Shuffle() {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	l := len(pokers)
-	r.Shuffle(l, func(i, j int) {
-		pokers.Swap(i, j)
-	})
-}
-
-func (pokers Pokers) Swap(i, j int) {
-	pokers[i], pokers[j] = pokers[j], pokers[i]
-}
-
-func (pokers Pokers) SortByKey() {
-	sort.Slice(pokers, func(i, j int) bool {
-		return pokers[i].Key < pokers[j].Key
-	})
-}
-
-func (pokers Pokers) SortByValue() {
-	sort.Slice(pokers, func(i, j int) bool {
-		return pokers[i].Val < pokers[j].Val
-	})
-}
-
-func (pokers Pokers) SetOaa(oaa ...int) {
-	for i := range pokers {
-		if arrays.Contains(oaa, pokers[i].Key) {
-			pokers[i].OAA = true
-		}
-	}
-}
-
-func (pokers Pokers) SortByOaaValue() {
-	sort.Slice(pokers, func(i, j int) bool {
-		if pokers[i].OAA == pokers[j].OAA {
-			return pokers[i].Val < pokers[j].Val
-		} else if pokers[i].OAA {
-			return false
-		} else {
-			return true
-		}
-	})
-}
-
-func (pokers Pokers) String() string {
-	return pokers.OaaString()
-}
-
-func (pokers Pokers) OaaString() string {
-	buf := bytes.Buffer{}
-	for i := len(pokers) - 1; i >= 0; i-- {
-		poker := pokers[i]
-		flag := ""
-		if poker.OAA {
-			flag = "*"
-		}
-		buf.WriteString(fmt.Sprintf("%s%v", flag, poker.Desc))
-		if i != 0 {
-			buf.WriteString(" ")
-		}
-	}
-	return buf.String()
+type GameEvent struct {
+	Message
+	Room   Room   `json:"room"`
+	Player Player `json:"player"`
+	Pokers Pokers `json:"pokers"`
 }
