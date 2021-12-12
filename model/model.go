@@ -6,15 +6,20 @@ type AuthInfo struct {
 	Score int64  `json:"score"`
 }
 
-type Message struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+type Data struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type Option struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type Player struct {
 	ID     int64  `json:"id"`
 	Name   string `json:"name"`
-	Score  string `json:"score"`
+	Score  int64  `json:"score"`
 	Group  int    `json:"group"`
 	Pokers int    `json:"pokers"`
 }
@@ -22,7 +27,7 @@ type Player struct {
 type Room struct {
 	ID        int64  `json:"id"`
 	Name      string `json:"name"`
-	Type      int64  `json:"type"`
+	Type      int    `json:"type"`
 	TypeDesc  string `json:"typeDesc"`
 	Players   int    `json:"players"`
 	State     int    `json:"state"`
@@ -30,31 +35,36 @@ type Room struct {
 	Creator   int64  `json:"creator"`
 }
 
+type Options struct {
+	Data
+	Options []Option `json:"options"`
+}
+
 type RoomList struct {
-	Message
+	Data
 	Rooms []Room `json:"rooms"`
 }
 
 type RoomInfo struct {
-	Message
+	Data
 	Room    Room     `json:"room"`
 	Players []Player `json:"players"`
 }
 
 type RoomEvent struct {
-	Message
+	Data
 	Room   Room   `json:"room"`
 	Player Player `json:"player"`
 }
 
 type Play struct {
-	Message
+	Data
 	Player Player `json:"player"`
 	Pokers Pokers `json:"pokers"`
 }
 
 type GameEvent struct {
-	Message
+	Data
 	Room   Room   `json:"room"`
 	Player Player `json:"player"`
 	Pokers Pokers `json:"pokers"`

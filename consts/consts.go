@@ -6,6 +6,18 @@ const (
 	MAX_PACKET_SIZE = 65536
 )
 
+const (
+	CodeWelcome              = 1001
+	CodeHomeOptions          = 1002
+	CodeRoomList             = 1003
+	CodeRoomEventJoin        = 1004
+	CodeGameTypeOptions      = 1005
+	CodeRoomEventCreate      = 1006
+	CodeRoomEventExit        = 1007
+	CodeRoomEventOffline     = 1008
+	CodeRoomEventOwnerChange = 1009
+)
+
 type FacesType int
 
 const (
