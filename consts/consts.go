@@ -1,6 +1,10 @@
 package consts
 
-const IS = "INTERACTIVE_SIGNAL"
+const (
+	IS_START        = "INTERACTIVE_SIGNAL_START"
+	IS_STOP         = "INTERACTIVE_SIGNAL_STOP"
+	MAX_PACKET_SIZE = 65536
+)
 
 type FacesType int
 

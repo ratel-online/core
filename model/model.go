@@ -37,8 +37,8 @@ type RoomList struct {
 
 type RoomInfo struct {
 	Message
-	Room   Room     `json:"room"`
-	Player []Player `json:"player"`
+	Room    Room     `json:"room"`
+	Players []Player `json:"players"`
 }
 
 type RoomEvent struct {
