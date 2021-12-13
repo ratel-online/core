@@ -63,6 +63,13 @@ func SetValue(pokers model.Pokers, kv map[int]int) {
 }
 
 func ParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
+	hasOaa := false
+	for _, currPoker := range pokers {
+		if currPoker.Oaa {
+			hasOaa = true
+			break
+		}
+	}
 	list := parseFaces(pokers, rules)
 	if len(list) == 0 {
 		return list
@@ -77,6 +84,10 @@ func ParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 			keys = append(keys, mapping[v])
 		}
 		list[i].Keys = keys
+		list[i].HasOaa = hasOaa
+		if hasOaa && faces.Type == consts.FacesBomb {
+			list[i].Score -= 300
+		}
 	}
 	return list
 }

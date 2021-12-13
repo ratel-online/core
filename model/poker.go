@@ -18,7 +18,7 @@ type Poker struct {
 	Val  int    `json:"val"`
 	Type int    `json:"type"`
 	Desc string `json:"desc"`
-	OAA  bool   `json:"oaa"`
+	Oaa  bool   `json:"oaa"`
 }
 
 type Faces struct {
@@ -28,6 +28,7 @@ type Faces struct {
 	Type   consts.FacesType `json:"type"`
 	Main   int              `json:"main"`
 	Extra  int              `json:"extra"`
+	HasOaa bool             `json:"hasOaa"`
 }
 
 func (f *Faces) SetValues(values []int) *Faces {
@@ -105,16 +106,16 @@ func (pokers Pokers) SortByValue() {
 func (pokers Pokers) SetOaa(oaa ...int) {
 	for i := range pokers {
 		if arrays.Contains(oaa, pokers[i].Key) {
-			pokers[i].OAA = true
+			pokers[i].Oaa = true
 		}
 	}
 }
 
 func (pokers Pokers) SortByOaaValue() {
 	sort.Slice(pokers, func(i, j int) bool {
-		if pokers[i].OAA == pokers[j].OAA {
+		if pokers[i].Oaa == pokers[j].Oaa {
 			return pokers[i].Val < pokers[j].Val
-		} else if pokers[i].OAA {
+		} else if pokers[i].Oaa {
 			return false
 		} else {
 			return true
@@ -131,7 +132,7 @@ func (pokers Pokers) OaaString() string {
 	for i := len(pokers) - 1; i >= 0; i-- {
 		poker := pokers[i]
 		flag := ""
-		if poker.OAA {
+		if poker.Oaa {
 			flag = "*"
 		}
 		buf.WriteString(fmt.Sprintf("%s%v", flag, poker.Desc))
