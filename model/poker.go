@@ -91,6 +91,14 @@ func (pokers Pokers) Swap(i, j int) {
 	pokers[i], pokers[j] = pokers[j], pokers[i]
 }
 
+func (pokers Pokers) Keys() []int {
+	keys := make([]int, 0)
+	for _, poker := range pokers {
+		keys = append(keys, poker.Key)
+	}
+	return keys
+}
+
 func (pokers Pokers) SortByKey() {
 	sort.Slice(pokers, func(i, j int) bool {
 		return pokers[i].Key < pokers[j].Key

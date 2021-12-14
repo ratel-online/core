@@ -1,21 +1,31 @@
 package consts
 
 const (
-	IS_START        = "INTERACTIVE_SIGNAL_START"
-	IS_STOP         = "INTERACTIVE_SIGNAL_STOP"
-	MAX_PACKET_SIZE = 65536
+	IsStart       = "INTERACTIVE_SIGNAL_START"
+	IsStop        = "INTERACTIVE_SIGNAL_STOP"
+	MaxPacketSize = 65536
 )
 
 const (
-	CodeWelcome              = 1001
-	CodeHomeOptions          = 1002
-	CodeRoomList             = 1003
-	CodeRoomEventJoin        = 1004
-	CodeGameTypeOptions      = 1005
-	CodeRoomEventCreate      = 1006
-	CodeRoomEventExit        = 1007
-	CodeRoomEventOffline     = 1008
-	CodeRoomEventOwnerChange = 1009
+	Service   = 1
+	Broadcast = 2
+	Instruct  = 3
+
+	ServiceGetRooms           = 1001
+	ServiceGetRoom            = 1002
+	ServiceGetRoomPlayers     = 1003
+	ServiceGetGame            = 1004
+	ServiceGetGameTypeOptions = 1005
+
+	BroadcastCodeWelcome              = 1001
+	BroadcastCodeHomeOptions          = 1002
+	BroadcastCodeRoomList             = 1003
+	BroadcastCodeRoomEventJoin        = 1004
+	BroadcastCodeGameTypeOptions      = 1005
+	BroadcastCodeRoomEventCreate      = 1006
+	BroadcastCodeRoomEventExit        = 1007
+	BroadcastCodeRoomEventOffline     = 1008
+	BroadcastCodeRoomEventOwnerChange = 1009
 )
 
 type FacesType int

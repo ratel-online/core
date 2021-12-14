@@ -90,8 +90,8 @@ func decode(r io.Reader) (*Packet, error) {
 	if err != nil {
 		return nil, err
 	}
-	if l > consts.MAX_PACKET_SIZE {
-		return nil, errors.New("Overflow max packet size " + strconv.Itoa(consts.MAX_PACKET_SIZE))
+	if l > consts.MaxPacketSize {
+		return nil, errors.New("Overflow max packet size " + strconv.Itoa(consts.MaxPacketSize))
 	}
 	dataBytes := make([]byte, l)
 	_, err = io.ReadFull(r, dataBytes)
