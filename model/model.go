@@ -1,19 +1,37 @@
 package model
 
 import (
+	"github.com/ratel-online/core/consts"
 	"github.com/ratel-online/core/errors"
 	"github.com/ratel-online/core/util/json"
+	"strconv"
 )
 
 type AuthInfo struct {
 	ID    int64  `json:"id"`
 	Name  string `json:"name"`
 	Score int64  `json:"score"`
+	Token string `json:"token"`
 }
 
 type Req struct {
 	Type int    `json:"type"`
+	Code int    `json:"code"`
 	Data []byte `json:"data"`
+}
+
+func (r Req) Int() int {
+	v, _ := strconv.ParseInt(r.String(), 10, 64)
+	return int(v)
+}
+
+func (r Req) Int64() int64 {
+	v, _ := strconv.ParseInt(r.String(), 10, 64)
+	return v
+}
+
+func (r Req) String() string {
+	return string(r.Data)
 }
 
 type Resp struct {
@@ -21,6 +39,10 @@ type Resp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data []byte `json:"data"`
+}
+
+func (r Resp) Unmarshal(v interface{}) error {
+	return json.Unmarshal(r.Data, v)
 }
 
 func ErrResp(t int, err error) Resp {
@@ -38,6 +60,14 @@ func ErrResp(t int, err error) Resp {
 func SucResp(t int, data interface{}) Resp {
 	return Resp{
 		Type: t,
+		Data: json.Marshal(data),
+	}
+}
+
+func SucBroadcast(code int, data interface{}) Resp {
+	return Resp{
+		Type: consts.Broadcast,
+		Code: code,
 		Data: json.Marshal(data),
 	}
 }

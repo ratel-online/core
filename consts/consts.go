@@ -11,11 +11,14 @@ const (
 	Broadcast = 2
 	Instruct  = 3
 
-	ServiceGetRooms           = 1001
-	ServiceGetRoom            = 1002
-	ServiceGetRoomPlayers     = 1003
-	ServiceGetGame            = 1004
-	ServiceGetGameTypeOptions = 1005
+	ServiceGetRooms       = 1001
+	ServiceGetRoom        = 1002
+	ServiceGetRoomPlayers = 1003
+	ServiceGetGame        = 1004
+	ServiceGetGameTypes   = 1005
+	ServiceJoinRoom       = 1006
+	ServiceLeaveRoom      = 1007
+	ServiceCreateRoom     = 1008
 
 	BroadcastCodeWelcome              = 1001
 	BroadcastCodeHomeOptions          = 1002

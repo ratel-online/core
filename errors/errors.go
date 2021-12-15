@@ -28,4 +28,5 @@ var (
 	GamePlayersInvalid     = NewErr(1, "Game players invalid. ")
 	PokersFacesInvalid     = NewErr(1, "Pokers faces invalid. ")
 	HaveToPlay             = NewErr(1, "Have to play. ")
+	RequestInvalid         = NewErr(1, "Request invalid.")
 )
