@@ -31,6 +31,10 @@ type Faces struct {
 	HasOaa bool             `json:"hasOaa"`
 }
 
+func (f Faces) String() string {
+	return fmt.Sprintf("keys: %v, main %v, extra %v, type %v", f.Keys, f.Main, f.Extra, f.Type)
+}
+
 func (f *Faces) SetValues(values []int) *Faces {
 	f.Values = values
 	return f

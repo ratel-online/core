@@ -174,8 +174,18 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 			list = parseUnionOrStraight(group, rules)
 		} else if counts[0] == 4 && len(counts) == 2 && counts[1] <= 2 {
 			if len(group[counts[0]]) == 1 && ((counts[1] == 2 && len(group[counts[1]]) <= 2) || (counts[1] == 1 && len(group[counts[1]]) == 2)) {
-				list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0] * counts[0]), Main: len(group[counts[0]]), Extra: counts[1], Type: consts.FacesUnion4})
+				extra := counts[1]
+				if extra == 2 && len(group[extra]) == 1 {
+					extra = 1
+				}
+				list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0] * counts[0]), Main: len(group[counts[0]]), Extra: extra, Type: consts.FacesUnion4})
 			}
+		}
+		if counts[0] == 4 && len(counts) == 1 && len(group[counts[0]]) == 2 {
+			values = make([]int, 0)
+			values = arrays.AppendN(values, group[counts[0]][1], counts[0])
+			values = arrays.AppendN(values, group[counts[0]][0], counts[0])
+			list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][1] * counts[0]), Main: 1, Extra: 1, Type: consts.FacesUnion4})
 		}
 	}
 	return list

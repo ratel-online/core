@@ -1,9 +1,9 @@
 package consts
 
 const (
-	IS_START        = "INTERACTIVE_SIGNAL_START"
-	IS_STOP         = "INTERACTIVE_SIGNAL_STOP"
-	MAX_PACKET_SIZE = 65536
+	IsStart       = "INTERACTIVE_SIGNAL_START"
+	IsStop        = "INTERACTIVE_SIGNAL_STOP"
+	MaxPacketSize = 65536
 )
 
 const (

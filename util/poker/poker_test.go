@@ -61,17 +61,22 @@ func getPokers(keys ...int) model.Pokers {
 }
 
 func TestDistribute(t *testing.T) {
-	pokersArr, _ := Distribute(3, defaultRules)
-	for _, pokers := range pokersArr {
-		pokers.SortByKey()
-		t.Log(pokers.String())
-	}
-	pokersArr, _ = Distribute(5, defaultRules)
-	for _, pokers := range pokersArr {
-		pokers.SortByKey()
-		t.Log(pokers.String())
-	}
-	pokersArr, _ = Distribute(7, defaultRules)
+	//pokersArr, _ := Distribute(3, defaultRules)
+	//for _, pokers := range pokersArr {
+	//	pokers.SortByKey()
+	//	t.Log(pokers.String())
+	//}
+	//pokersArr, _ = Distribute(5, defaultRules)
+	//for _, pokers := range pokersArr {
+	//	pokers.SortByKey()
+	//	t.Log(pokers.String())
+	//}
+	//pokersArr, _ = Distribute(7, defaultRules)
+	//for _, pokers := range pokersArr {
+	//	pokers.SortByKey()
+	//	t.Log(pokers.String())
+	//}
+	pokersArr, _ := Distribute(2, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())
@@ -154,6 +159,19 @@ func TestParseFaces(t *testing.T) {
 	for _, testCase := range testCases {
 		testParseFaces(t, testCase.pokers, testCase.actualType)
 	}
+}
+
+func TestParseFaces2(t *testing.T) {
+	pokers1 := getPokers(3, 3, 3, 3, 4, 4, 4, 4)
+	faces1 := ParseFaces(pokers1, defaultRules)
+	fmt.Println(faces1)
+
+	//pokers1 := getPokers(8, 8, 8, 8, 2, 2, 2, 2)
+	//faces1 := ParseFaces(pokers1, defaultRules)
+	//pokers2 := getPokers(9, 9, 9, 9, 1, 2)
+	//faces2 := ParseFaces(pokers2, defaultRules)
+	//fmt.Println(faces1[0])
+	//fmt.Println(faces2[0])
 }
 
 func TestParseFacesScore(t *testing.T) {
