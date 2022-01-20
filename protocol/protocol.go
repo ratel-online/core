@@ -57,6 +57,7 @@ type ReadWriteCloser interface {
 	Read() (*Packet, error)
 	Write(msg Packet) error
 	Close() error
+	IP() string
 }
 
 func readUint32(reader io.Reader) (uint32, error) {

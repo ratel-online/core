@@ -3,7 +3,30 @@ package strings
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 )
+
+var desensitizeWords = [][]string{
+	{"邓总", "老哥"},
+	{"dengzong", "老哥"},
+	{"邓", "哥"},
+	{"dz", "老哥"},
+	{"deng", "哥"},
+	{"zong", "哥"},
+	{"死", "爱"},
+	{"si", "爱"},
+	{"傻逼", "机灵鬼"},
+	{"shabi", "机灵鬼"},
+	{"傻", "机灵"},
+	{"sha", "机灵"},
+	{"逼", "哥"},
+	{"bi", "哥"},
+	{"你妈", "我爹"},
+	{"你马", "我爹"},
+	{"ma", "爹"},
+	{"狗", "神"},
+	{"gou", "神"},
+}
 
 func String(dest interface{}) string {
 	var key string
@@ -84,4 +107,11 @@ func String(dest interface{}) string {
 		key = string(newValue)
 	}
 	return key
+}
+
+func Desensitize(str string) string {
+	for _, words := range desensitizeWords {
+		str = strings.ReplaceAll(str, words[0], words[1])
+	}
+	return str
 }

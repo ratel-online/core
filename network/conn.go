@@ -24,6 +24,10 @@ func (c *Conn) ID() int64 {
 	return c.id
 }
 
+func (c *Conn) IP() string {
+	return c.conn.IP()
+}
+
 func (c *Conn) Close() error {
 	c.state = 1
 	return c.conn.Close()

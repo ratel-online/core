@@ -1,26 +1,30 @@
 package protocol
 
 import (
-    "net"
+	"net"
 )
 
 type TcpReadWriteCloser struct {
-    conn net.Conn
+	conn net.Conn
 }
 
 func NewTcpReadWriteCloser(conn net.Conn) TcpReadWriteCloser {
-    return TcpReadWriteCloser{conn: conn}
+	return TcpReadWriteCloser{conn: conn}
 }
 
 func (t TcpReadWriteCloser) Read() (*Packet, error) {
-    return decode(t.conn)
+	return decode(t.conn)
 }
 
 func (t TcpReadWriteCloser) Write(msg Packet) error {
-    _, err := t.conn.Write(encode(msg))
-    return err
+	_, err := t.conn.Write(encode(msg))
+	return err
 }
 
 func (t TcpReadWriteCloser) Close() error {
-    return t.conn.Close()
+	return t.conn.Close()
+}
+
+func (t TcpReadWriteCloser) IP() string {
+	return t.conn.RemoteAddr().String()
 }
