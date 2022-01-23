@@ -13,7 +13,7 @@ func TestPokers_Shuffle(t *testing.T) {
 			Val: 0,
 		})
 	}
-	pokers.Shuffle()
+	pokers.Shuffle(len(pokers))
 	for _, v := range pokers {
 		fmt.Print(v.Key, " ")
 	}

@@ -76,7 +76,7 @@ func TestDistribute(t *testing.T) {
 	//	pokers.SortByKey()
 	//	t.Log(pokers.String())
 	//}
-	pokersArr, _ := Distribute(2, defaultRules)
+	pokersArr, _ := Distribute(2, 0, defaultRules)
 	for _, pokers := range pokersArr {
 		pokers.SortByKey()
 		t.Log(pokers.String())

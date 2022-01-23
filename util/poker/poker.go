@@ -16,11 +16,17 @@ type Rules interface {
 	Reserved() bool
 }
 
-func Distribute(number int, rules Rules) ([]model.Pokers, int) {
+func Sets(number int) int {
 	sets := number / 3
 	if number%3 > 0 {
 		sets++
 	}
+	return sets
+}
+
+// Distribute, number is players number. n is shuffle times.
+func Distribute(number int, n int, rules Rules) ([]model.Pokers, int) {
+	sets := Sets(number)
 	pokers := make(model.Pokers, 0)
 	for i := 0; i < sets; i++ {
 		pokers = append(pokers, base...)
@@ -28,7 +34,10 @@ func Distribute(number int, rules Rules) ([]model.Pokers, int) {
 	for i := range pokers {
 		pokers[i].Val = rules.Value(pokers[i].Key)
 	}
-	pokers.Shuffle()
+	if n <= 0 {
+		n = len(pokers)
+	}
+	pokers.Shuffle(n)
 	size := len(pokers)
 	reserve := 0
 	if rules.Reserved() {

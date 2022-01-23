@@ -83,10 +83,9 @@ func (f Faces) Compare(lastFaces Faces) bool {
 	return f.Score > lastFaces.Score && f.Main == lastFaces.Main && f.Extra == lastFaces.Extra
 }
 
-func (pokers Pokers) Shuffle() {
+func (pokers Pokers) Shuffle(n int) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	l := len(pokers)
-	r.Shuffle(l, func(i, j int) {
+	r.Shuffle(n, func(i, j int) {
 		pokers.Swap(i, j)
 	})
 }
