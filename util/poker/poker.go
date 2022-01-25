@@ -25,7 +25,7 @@ func Sets(number int) int {
 }
 
 // Distribute, number is players number. n is shuffle times.
-func Distribute(number int, n int, rules Rules) ([]model.Pokers, int) {
+func Distribute(number int, dontShuffle bool, rules Rules) ([]model.Pokers, int) {
 	sets := Sets(number)
 	pokers := make(model.Pokers, 0)
 	for i := 0; i < sets; i++ {
@@ -34,11 +34,12 @@ func Distribute(number int, n int, rules Rules) ([]model.Pokers, int) {
 	for i := range pokers {
 		pokers[i].Val = rules.Value(pokers[i].Key)
 	}
-	if n <= 0 {
-		n = len(pokers)
-	}
-	pokers.Shuffle(n)
 	size := len(pokers)
+	if dontShuffle {
+		pokers.Shuffle(size, 3)
+	} else {
+		pokers.Shuffle(size, 1)
+	}
 	reserve := 0
 	if rules.Reserved() {
 		if size%number == 0 {
