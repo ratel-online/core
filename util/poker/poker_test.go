@@ -54,7 +54,6 @@ func getPokers(keys ...int) model.Pokers {
 		pokers = append(pokers, model.Poker{
 			Key:  k,
 			Desc: desc[k],
-			Type: 1,
 		})
 	}
 	return pokers

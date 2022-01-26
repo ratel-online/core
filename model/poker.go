@@ -16,7 +16,6 @@ type Pokers []Poker
 type Poker struct {
 	Key  int    `json:"key"`
 	Val  int    `json:"val"`
-	Type int    `json:"type"`
 	Desc string `json:"desc"`
 	Oaa  bool   `json:"oaa"`
 }

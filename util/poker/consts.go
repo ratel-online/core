@@ -3,6 +3,8 @@ package poker
 import (
 	"github.com/ratel-online/core/model"
 	"github.com/ratel-online/core/util/strings"
+	"math/rand"
+	"time"
 )
 
 var (
@@ -48,11 +50,11 @@ func init() {
 	}
 	for k := 1; k <= 13; k++ {
 		for t := 1; t <= 4; t++ {
-			base = append(base, model.Poker{Key: k, Val: 0, Type: t, Desc: desc[k]})
+			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 		}
 	}
 	for k := 14; k <= 15; k++ {
-		base = append(base, model.Poker{Key: k, Val: 0, Type: 1, Desc: desc[k]})
+		base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 	}
 }
 
@@ -69,4 +71,26 @@ func GetAlias(key int) string {
 
 func GetDesc(key int) string {
 	return desc[key]
+}
+
+func GetDontShuffleBase() model.Pokers {
+	base := model.Pokers{}
+	keys := make([]int, 0)
+	for k := 1; k <= 15; k++ {
+		keys = append(keys, k)
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	r.Shuffle(len(keys), func(i, j int) {
+		keys[i], keys[j] = keys[j], keys[i]
+	})
+	for _, k := range keys {
+		if k <= 13 {
+			for t := 1; t <= 4; t++ {
+				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+			}
+		} else {
+			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+		}
+	}
+	return base
 }

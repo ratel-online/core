@@ -28,15 +28,19 @@ func Sets(number int) int {
 func Distribute(number int, dontShuffle bool, rules Rules) ([]model.Pokers, int) {
 	sets := Sets(number)
 	pokers := make(model.Pokers, 0)
+	_base := base
+	if dontShuffle {
+		_base = GetDontShuffleBase()
+	}
 	for i := 0; i < sets; i++ {
-		pokers = append(pokers, base...)
+		pokers = append(pokers, _base...)
 	}
 	for i := range pokers {
 		pokers[i].Val = rules.Value(pokers[i].Key)
 	}
 	size := len(pokers)
 	if dontShuffle {
-		pokers.Shuffle(size, 3)
+		pokers.Shuffle(size, 4)
 	} else {
 		pokers.Shuffle(size, 1)
 	}
@@ -368,7 +372,6 @@ func GetPokers(keys ...int) model.Pokers {
 		pokers = append(pokers, model.Poker{
 			Key:  k,
 			Desc: desc[k],
-			Type: 1,
 		})
 	}
 	return pokers
