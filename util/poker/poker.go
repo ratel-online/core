@@ -339,14 +339,27 @@ func Random(exclude ...int) int {
 	for {
 		times++
 		k := r.Intn(15) + 1
-		if !arrays.Contains(exclude, k) {
-			return k
-		}
-		if times > 64 {
-			// impossibility
+		if !arrays.Contains(exclude, k) || times > 64 {
 			return k
 		}
 	}
+}
+
+func RandomN(n int, exclude ...int) []int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	keys := make([]int, 0)
+	times := 0
+	for i := 0; i < n; i++ {
+		for {
+			times++
+			k := r.Intn(15) + 1
+			if !arrays.Contains(exclude, k) || times > 64 {
+				keys = append(keys, k)
+				break
+			}
+		}
+	}
+	return keys
 }
 
 func GetPokers(keys ...int) model.Pokers {
