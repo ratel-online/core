@@ -8,9 +8,9 @@ import (
 var connId int64
 
 type Conn struct {
-	id    int64
-	state int
-	conn  protocol.ReadWriteCloser
+	id    int64                    // 连接id
+	state int                      // 连接状态 1关闭 0默认
+	conn  protocol.ReadWriteCloser // 传输流
 }
 
 func Wrapper(conn protocol.ReadWriteCloser) *Conn {
