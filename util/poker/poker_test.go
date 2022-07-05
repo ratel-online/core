@@ -175,6 +175,7 @@ func TestParseFaces2(t *testing.T) {
 
 func TestParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
+		{pokers: getPokers(2, 2, 2, 2)},
 		{pokers: getPokers(3, 3, 3, 3)},
 		{pokers: getPokers(2, 2, 2, 2)},
 		{pokers: getPokers(14, 14)},

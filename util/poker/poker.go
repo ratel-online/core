@@ -70,6 +70,30 @@ func Distribute(number int, dontShuffle bool, rules Rules) ([]model.Pokers, int)
 	return pokersArr, sets
 }
 
+func RunFastDistribute(dontShuffle bool, rules Rules) []model.Pokers {
+	pokers := append(make(model.Pokers, 0), GetRunFastDontShuffleBase()...)
+	for i := range pokers {
+		pokers[i].Val = rules.Value(pokers[i].Key)
+	}
+	size := len(pokers)
+	if dontShuffle {
+		pokers.Shuffle(size, 3)
+	} else {
+		pokers.Shuffle(size, 1)
+	}
+	reserve := 0
+	avgNum := (size - reserve) / 3
+	pokersArr := make([]model.Pokers, 0)
+	for i := 0; i < 3; i++ {
+		pokerArr := make([]model.Poker, 0)
+		pokersArr = append(pokersArr, append(pokerArr, pokers[i*avgNum:(i+1)*avgNum]...))
+	}
+	for i := range pokersArr {
+		pokersArr[i].SortByValue()
+	}
+	return pokersArr
+}
+
 func SetValue(pokers model.Pokers, kv map[int]int) {
 	for i := range pokers {
 		pokers[i].Val = kv[pokers[i].Key]
