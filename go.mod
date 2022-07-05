@@ -1,4 +1,4 @@
-module github.com/ratel-online/core
+module github.com/mlmdflr/ratel-core
 
 go 1.17
 

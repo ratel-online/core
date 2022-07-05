@@ -3,8 +3,8 @@ package protocol
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/ratel-online/core/consts"
-	"github.com/ratel-online/core/util/json"
+	"github.com/mlmdflr/ratel-core/consts"
+	"github.com/mlmdflr/ratel-core/util/json"
 	"io"
 	"strconv"
 )

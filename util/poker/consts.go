@@ -1,8 +1,8 @@
 package poker
 
 import (
-	"github.com/ratel-online/core/model"
-	"github.com/ratel-online/core/util/strings"
+	"github.com/mlmdflr/ratel-core/model"
+	"github.com/mlmdflr/ratel-core/util/strings"
 	"math/rand"
 	"time"
 )

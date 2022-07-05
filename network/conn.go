@@ -1,7 +1,7 @@
 package network
 
 import (
-	"github.com/ratel-online/core/protocol"
+	"github.com/mlmdflr/ratel-core/protocol"
 	"sync/atomic"
 )
 
