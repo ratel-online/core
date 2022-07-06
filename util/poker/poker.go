@@ -232,7 +232,7 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 	return list
 }
 
-func runFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
+func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 	if len(pokers) == 0 {
 		return nil
 	}

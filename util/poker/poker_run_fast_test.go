@@ -95,7 +95,7 @@ func TestRunFastParseFacesScore(t *testing.T) {
 	}
 	preScore := int64(-1)
 	for _, testCase := range testCases {
-		list := runFastParseFaces(testCase.pokers, runFastRules)
+		list := RunFastParseFaces(testCase.pokers, runFastRules)
 		if len(list) > 0 {
 			faces := list[0]
 			if faces.Score < preScore {
