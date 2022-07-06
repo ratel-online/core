@@ -175,7 +175,6 @@ func TestParseFaces2(t *testing.T) {
 
 func TestParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
-		{pokers: getPokers(2, 2, 2, 2)},
 		{pokers: getPokers(3, 3, 3, 3)},
 		{pokers: getPokers(2, 2, 2, 2)},
 		{pokers: getPokers(14, 14)},
@@ -204,7 +203,7 @@ func TestParseFacesScore(t *testing.T) {
 				t.Error(fmt.Sprintf("err score, pre %v should lt %v", preScore, faces.Score))
 			}
 			preScore = faces.Score
-			t.Log(testCase.pokers.String(), faces.Score)
+			t.Log(testCase.pokers.String(), faces.Score, faces.Type)
 		}
 	}
 }

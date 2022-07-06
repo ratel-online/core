@@ -4,6 +4,7 @@ import (
 	"github.com/mlmdflr/ratel-core/consts"
 	"github.com/mlmdflr/ratel-core/model"
 	"github.com/mlmdflr/ratel-core/util/arrays"
+	"math"
 	"math/rand"
 	"sort"
 	"time"
@@ -24,7 +25,7 @@ func Sets(number int) int {
 	return sets
 }
 
-// Distribute, number is players number. n is shuffle times.
+// Distribute number is players number. n is shuffle times.
 func Distribute(number int, dontShuffle bool, rules Rules) ([]model.Pokers, int) {
 	sets := Sets(number)
 	pokers := make(model.Pokers, 0)
@@ -124,6 +125,7 @@ func ParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 		list[i].Keys = keys
 		list[i].HasOaa = hasOaa
 		if hasOaa && faces.Type == consts.FacesBomb {
+			//賴子炸分數減300
 			list[i].Score -= 300
 		}
 	}
@@ -139,6 +141,7 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 	group := map[int][]int{}
 	counts := make([]int, 0)
 	values := make([]int, 0)
+	//單排記分
 	for _, poker := range pokers {
 		if poker.Key < 0 || poker.Key > 15 {
 			return nil
@@ -225,6 +228,133 @@ func parseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 			values = arrays.AppendN(values, group[counts[0]][0], counts[0])
 			list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][1] * counts[0]), Main: 1, Extra: 1, Type: consts.FacesUnion4})
 		}
+	}
+	return list
+}
+
+func runFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
+	if len(pokers) == 0 {
+		return nil
+	}
+	sc, xc, score := 0, 0, int64(0)
+	stats := map[int]int{}
+	group := map[int][]int{}
+	counts := make([]int, 0)
+	values := make([]int, 0)
+	//單排記分
+	for _, poker := range pokers {
+		if poker.Key < 0 || poker.Key > 15 {
+			return nil
+		}
+		poker.Val = rules.Value(poker.Key)
+		score += int64(poker.Val)
+		values = append(values, poker.Val)
+		stats[poker.Val]++
+		if poker.Key == 14 {
+			sc++
+		} else if poker.Key == 15 {
+			xc++
+		}
+	}
+	for v, c := range stats {
+		group[c] = append(group[c], v)
+	}
+	for c := range group {
+		counts = append(counts, c)
+		sort.Ints(group[c])
+	}
+	sort.Ints(counts)
+	for i := 0; i < len(counts)/2; i++ {
+		counts[i], counts[len(counts)-i-1] = counts[len(counts)-i-1], counts[i]
+	}
+	list := make([]model.Faces, 0)
+	if sc+xc == len(pokers) && sc+xc > 1 {
+		list = append(list, model.Faces{Values: values, Score: int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000), Type: consts.FacesBomb})
+	} else if counts[0] == 1 {
+		if len(group[counts[0]]) == 1 {
+			list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesSingle})
+		} else if rules.IsStraight(group[counts[0]], counts[0]) {
+			list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
+		}
+	} else if counts[0] == 2 && len(counts) == 1 {
+		if len(group[counts[0]]) == 1 {
+			list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesDouble})
+		} else if rules.IsStraight(group[counts[0]], counts[0]) {
+			list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
+		}
+	} else if counts[0] >= 3 {
+		if len(counts) == 1 && len(group[counts[0]]) == 1 {
+			if counts[0] == 3 {
+				list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesTriple})
+			} else {
+				list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0]*counts[0]) + int64(len(pokers)*1000), Type: consts.FacesBomb})
+			}
+		} else if len(counts) == 1 && rules.IsStraight(group[counts[0]], counts[0]) {
+			if counts[0] == 3 {
+				list = append(list, model.Faces{Values: values, Score: score, Main: len(group[counts[0]]), Type: consts.FacesStraight})
+			} else if counts[0] == 4 {
+				values = make([]int, 0)
+				for _, v := range group[counts[0]] {
+					values = arrays.AppendN(values, v, 3)
+				}
+				for _, v := range group[counts[0]] {
+					values = append(values, v)
+				}
+				list = append(list, model.Faces{Values: values, Score: score / 4 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
+			} else if counts[0] == 5 {
+				values = make([]int, 0)
+				for _, v := range group[counts[0]] {
+					values = arrays.AppendN(values, v, 3)
+				}
+				for _, v := range group[counts[0]] {
+					values = arrays.AppendN(values, v, 2)
+				}
+				list = append(list, model.Faces{Values: values, Score: score / 5 * 3, Main: len(group[counts[0]]), Extra: 1, Type: consts.FacesUnion3Straight})
+			}
+		} else if len(group[3]) > 0 && len(group[4]) == 0 {
+			//三帶二
+			score := int64(0)
+			main := 0
+			extra := 0
+			_type := consts.FacesUnion3c2
+			if len(group[3]) == 1 && len(values)-3 <= 2 {
+				if len(values)-3 == 2 {
+					_type = consts.FacesUnion3c2s
+				}
+				main = 3
+				score = int64(group[3][0] * 3)
+			} else if len(group[3]) == 2 && len(values)-6 <= 4 && math.Abs(float64(group[3][0]-group[3][1])) == 1 {
+				if len(values)-6 == 4 {
+					_type = consts.FacesUnion3c2s
+				}
+				main = 6
+				extra = len(values) - main
+				score += int64(group[3][0]*3 + group[3][1]*3)
+			} else if len(group[3]) == 3 && len(values)-9 <= 6 {
+				if len(values)-9 == 6 {
+					_type = consts.FacesUnion3c2s
+				}
+				sort.Ints(group[3])
+				if group[3][2]-group[3][0] == 2 {
+					main = 9
+					extra = len(values) - main
+					score += int64(group[3][0]*3 + group[3][1]*3 + group[3][1]*3)
+				}
+			} else {
+				list = parseUnionOrStraight(group, rules)
+			}
+			list = append(list, model.Faces{Values: values, Score: score, Main: main, Extra: extra, Type: consts.FacesType(_type)})
+		} else if counts[0] == 4 && len(values)-4 <= 3 {
+			extra := len(values) - 4
+			list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][0] * counts[0]), Main: len(group[counts[0]]), Extra: extra, Type: consts.FacesUnion4})
+		}
+		if counts[0] == 4 && len(counts) == 1 && len(group[counts[0]]) == 2 {
+			values = make([]int, 0)
+			values = arrays.AppendN(values, group[counts[0]][1], counts[0])
+			values = arrays.AppendN(values, group[counts[0]][0], counts[0])
+			list = append(list, model.Faces{Values: values, Score: int64(group[counts[0]][1] * counts[0]), Main: 1, Extra: 1, Type: consts.FacesUnion4})
+		}
+
 	}
 	return list
 }

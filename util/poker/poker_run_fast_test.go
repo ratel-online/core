@@ -1,6 +1,7 @@
 package poker
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -30,7 +31,7 @@ func (d _runFastRules) IsStraight(faces []int, count int) bool {
 	if count == 1 {
 		return len(faces) >= 5
 	} else if count == 2 {
-		return len(faces) >= 3
+		return len(faces) >= 2
 	} else if count > 2 {
 		return len(faces) >= 2
 	}
@@ -62,4 +63,46 @@ func TestRunFastDistribute(t *testing.T) {
 	//	pokers.SortByValue()
 	//	t.Log(pokers.String())
 	//}
+}
+
+func TestRunFastParseFacesScore(t *testing.T) {
+	testCases := []parseFacesCase{
+		//{pokers: getPokers(8, 8, 8, 9, 9)},
+		//{pokers: getPokers(9, 9, 9, 4)},
+		{pokers: getPokers(10, 10, 10, 9, 9, 9, 8, 8, 8, 6, 6, 7, 5, 2, 9)},
+		{pokers: getPokers(10, 10, 10, 9, 9, 9, 8, 8, 8, 6, 6, 7, 5)},
+		//{pokers: getPokers(9, 9, 8, 8, 10, 10, 11, 11)},
+		//{pokers: getPokers(9, 9, 8, 8, 10, 10)},
+		//{pokers: getPokers(9, 9, 9, 9, 10, 10, 10, 10)},
+		//{pokers: getPokers(9, 9, 9, 9, 5, 5)},
+		//{pokers: getPokers(9, 9, 9, 9, 5)},
+		//{pokers: getPokers(14, 14)},
+		//{pokers: getPokers(14, 15)},
+		//{pokers: getPokers(15, 15)},
+		//{pokers: getPokers(3, 3, 3, 3, 3)},
+		//{pokers: getPokers(2, 2, 2, 2, 2)},
+		//{pokers: getPokers(3, 3, 3, 3, 3, 3)},
+		//{pokers: getPokers(2, 2, 2, 2, 2, 2)},
+		//{pokers: getPokers(14, 14, 14)},
+		//{pokers: getPokers(14, 14, 15)},
+		//{pokers: getPokers(14, 15, 15)},
+		//{pokers: getPokers(15, 15, 15)},
+		//{pokers: getPokers(3, 3, 3, 3, 3, 3, 3)},
+		//{pokers: getPokers(2, 2, 2, 2, 2, 2, 2)},
+		//{pokers: getPokers(3, 3, 3, 3, 3, 3, 3, 3)},
+		//{pokers: getPokers(2, 2, 2, 2, 2, 2, 2, 2)},
+		//{pokers: getPokers(14, 14, 15, 15)},
+	}
+	preScore := int64(-1)
+	for _, testCase := range testCases {
+		list := runFastParseFaces(testCase.pokers, runFastRules)
+		if len(list) > 0 {
+			faces := list[0]
+			if faces.Score < preScore {
+				t.Error(fmt.Sprintf("err score, pre %v should lt %v", preScore, faces.Score))
+			}
+			preScore = faces.Score
+			t.Log(testCase.pokers.String(), faces.Score, faces.Type)
+		}
+	}
 }

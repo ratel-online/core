@@ -22,13 +22,15 @@ type FacesType int
 
 const (
 	_                   FacesType = iota
-	FacesBomb                     = 1
-	FacesSingle                   = 2
-	FacesDouble                   = 3
-	FacesTriple                   = 4
-	FacesUnion3                   = 5
-	FacesUnion4                   = 6
-	FacesStraight                 = 7
-	FacesUnion3Straight           = 8
+	FacesBomb                     = 1 //炸彈
+	FacesSingle                   = 2 //單牌
+	FacesDouble                   = 3 //對子
+	FacesTriple                   = 4 //三張
+	FacesUnion3                   = 5 //三帶一
+	FacesUnion4                   = 6 //四帶二
+	FacesStraight                 = 7 //順子 or 連隊
+	FacesUnion3Straight           = 8 //飛機 在跑得快下飛機可以多帶幾張 如 333444 帶 5679
 	FacesInvalid                  = 9
+	FacesUnion3c2                 = 10 //三帶二
+	FacesUnion3c2s                = 11 //標準三帶二
 )
