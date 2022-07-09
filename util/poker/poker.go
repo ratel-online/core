@@ -236,7 +236,7 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 	if len(pokers) == 0 {
 		return nil
 	}
-	sc, xc, score := 0, 0, int64(0)
+	score := int64(0)
 	stats := map[int]int{}
 	group := map[int][]int{}
 	counts := make([]int, 0)
@@ -250,11 +250,6 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 		score += int64(poker.Val)
 		values = append(values, poker.Val)
 		stats[poker.Val]++
-		if poker.Key == 14 {
-			sc++
-		} else if poker.Key == 15 {
-			xc++
-		}
 	}
 	for v, c := range stats {
 		group[c] = append(group[c], v)
@@ -268,8 +263,8 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 		counts[i], counts[len(counts)-i-1] = counts[len(counts)-i-1], counts[i]
 	}
 	list := make([]model.Faces, 0)
-	if sc+xc == len(pokers) && sc+xc > 1 {
-		list = append(list, model.Faces{Values: values, Score: int64(sc*14+xc*15)*2 + int64(len(pokers)*2*1000), Type: consts.FacesBomb})
+	if 4 == len(pokers) && len(group[4]) == 1 {
+		list = append(list, model.Faces{Values: values, Score: int64(group[4][0])*2 + int64(len(pokers)*1000), Type: consts.FacesBomb})
 	} else if counts[0] == 1 {
 		if len(group[counts[0]]) == 1 {
 			list = append(list, model.Faces{Values: values, Score: score, Type: consts.FacesSingle})

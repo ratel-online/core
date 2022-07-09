@@ -68,7 +68,7 @@ func TestRunFastDistribute(t *testing.T) {
 
 func TestRunFastParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
-		////順子 or 連隊
+		//順子 or 連隊
 		{pokers: getPokers(8, 8, 9, 9)},
 		{pokers: getPokers(8, 8, 9, 9, 10, 10)},
 		{pokers: getPokers(8, 8, 9, 9, 10, 10, 11, 11)},
@@ -94,22 +94,10 @@ func TestRunFastParseFacesScore(t *testing.T) {
 		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 5, 5, 5, 3, 3, 3)},
 		{pokers: getPokers(6, 6, 6, 7, 7, 7, 5, 5, 5, 7, 5, 10, 10, 10, 10)},
 		{pokers: getPokers(9, 9, 9, 9, 5)},
-		{pokers: getPokers(14, 14)},
-		{pokers: getPokers(14, 15)},
-		{pokers: getPokers(15, 15)},
-		{pokers: getPokers(3, 3, 3, 3, 3)},
-		{pokers: getPokers(2, 2, 2, 2, 2)},
-		{pokers: getPokers(3, 3, 3, 3, 3, 3)},
-		{pokers: getPokers(2, 2, 2, 2, 2, 2)},
-		{pokers: getPokers(14, 14, 14)},
-		{pokers: getPokers(14, 14, 15)},
-		{pokers: getPokers(14, 15, 15)},
-		{pokers: getPokers(15, 15, 15)},
-		{pokers: getPokers(3, 3, 3, 3, 3, 3, 3)},
-		{pokers: getPokers(2, 2, 2, 2, 2, 2, 2)},
-		{pokers: getPokers(3, 3, 3, 3, 3, 3, 3, 3)},
-		{pokers: getPokers(2, 2, 2, 2, 2, 2, 2, 2)},
-		{pokers: getPokers(14, 14, 15, 15)},
+		{pokers: getPokers(3, 3, 3, 3)},
+		{pokers: getPokers(2, 2, 2, 2)},
+		{pokers: getPokers(11, 11, 11, 11)},
+		{pokers: getPokers(13, 13, 13, 13)},
 	}
 	preScore := int64(-1)
 	for _, testCase := range testCases {
