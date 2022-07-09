@@ -498,10 +498,6 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 	}
 	sort.Ints(counts)
 
-	if RunFastIsMax(lastPokers) {
-		return nil
-	}
-
 	switch lastPokers.Type {
 	//炸彈處理
 	case consts.FacesBomb:
