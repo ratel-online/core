@@ -501,7 +501,7 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 				accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesBomb, Keys: []int{group[4][k], group[4][k], group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k])}})
 			}
 		}
-		break
+		return accord
 	//單排處理
 	case consts.FacesSingle:
 		// 倒序單排

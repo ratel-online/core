@@ -114,7 +114,7 @@ func TestRunFastParseFacesScore(t *testing.T) {
 }
 
 func TestRunFastComparativeFaces(t *testing.T) {
-	list := RunFastComparativeFaces(model.Faces{Keys: []int{13, 13, 13, 13}, Values: []int{11, 11, 11, 11}, Score: int64(4), Main: 1, Type: 10}, getPokers(12, 12, 12, 12, 11, 9, 8, 4, 3, 3), runFastRules)
+	list := RunFastComparativeFaces(model.Faces{Keys: []int{10, 10, 10, 10}, Values: []int{8, 8, 8, 8}, Score: int64(4), Main: 1, Type: 1}, getPokers(13, 13, 13, 12, 12, 11, 11, 7, 7, 7, 7, 6, 6, 6, 6), runFastRules)
 	if len(list) > 0 {
 		faces := list[0]
 		t.Log(faces.Values, faces.Score, faces.Type)
