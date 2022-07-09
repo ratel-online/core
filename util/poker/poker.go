@@ -1,9 +1,9 @@
 package poker
 
 import (
-	"github.com/mlmdflr/ratel-core/consts"
-	"github.com/mlmdflr/ratel-core/model"
-	"github.com/mlmdflr/ratel-core/util/arrays"
+	"github.com/ratel-online/core/consts"
+	"github.com/ratel-online/core/model"
+	"github.com/ratel-online/core/util/arrays"
 	"math"
 	"math/rand"
 	"sort"

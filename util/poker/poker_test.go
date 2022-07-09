@@ -2,8 +2,8 @@ package poker
 
 import (
 	"fmt"
-	"github.com/mlmdflr/ratel-core/consts"
-	"github.com/mlmdflr/ratel-core/model"
+	"github.com/ratel-online/core/consts"
+	"github.com/ratel-online/core/model"
 	"testing"
 )
 

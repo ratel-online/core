@@ -3,8 +3,8 @@ package model
 import (
 	"bytes"
 	"fmt"
-	"github.com/mlmdflr/ratel-core/consts"
-	"github.com/mlmdflr/ratel-core/util/arrays"
+	"github.com/ratel-online/core/consts"
+	"github.com/ratel-online/core/util/arrays"
 	"math/rand"
 	"sort"
 	"strconv"
