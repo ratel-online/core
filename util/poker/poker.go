@@ -548,24 +548,25 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 		// 倒序三張
 		for k := len(group[3]) - 1; k >= 0; k-- {
 			if rules.Value(group[3][k]) > lastPokers.Values[0] {
+				key, val := RunFastMake(keys, []int{group[3][k], group[3][k], group[3][k]}, 2, rules)
 				if len(keys)-3 <= 2 {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2, Keys: []int{group[3][k], group[3][k], group[3][k]}, Values: []int{rules.Value(group[3][k]), rules.Value(group[3][k]), rules.Value(group[3][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2, Keys: key, Values: val})
 				} else {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2s, Keys: []int{group[3][k], group[3][k], group[3][k]}, Values: []int{rules.Value(group[3][k]), rules.Value(group[3][k]), rules.Value(group[3][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2s, Keys: key, Values: val})
 				}
 			}
 		}
 		// 倒序拆炸彈
 		for k := len(group[4]) - 1; k >= 0; k-- {
 			if rules.Value(group[4][k]) > lastPokers.Values[0] {
+				key, val := RunFastMake(keys, []int{group[4][k], group[4][k], group[4][k]}, 2, rules)
 				if len(keys)-3 <= 2 {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2, Keys: []int{group[4][k], group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2, Keys: key, Values: val})
 				} else {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2s, Keys: []int{group[4][k], group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2s, Keys: key, Values: val})
 				}
 			}
 		}
-
 		break
 	//二連三帶二處理
 	case consts.FacesUnion3c2C, consts.FacesUnion3c2Cs:
@@ -586,10 +587,11 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 				list := RunFastParseFaces(GetPokers(temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1]), rules)
 				if len(list) >= 0 {
 					if list[0].Score > lastPokers.Score {
+						key, val := RunFastMake(keys, []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1]}, 4, rules)
 						if len(keys)-6 <= 4 {
-							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2C, Keys: []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1]}, Values: []int{rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+1])}})
+							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2C, Keys: key, Values: val})
 						} else {
-							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2Cs, Keys: []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1]}, Values: []int{rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+1])}})
+							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2Cs, Keys: key, Values: val})
 						}
 					}
 				}
@@ -615,10 +617,11 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 				list := RunFastParseFaces(GetPokers(temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1], temp[k+2], temp[k+2], temp[k+2]), rules)
 				if len(list) >= 0 {
 					if list[0].Score > lastPokers.Score {
+						key, val := RunFastMake(keys, []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1], temp[k+2], temp[k+2], temp[k+2]}, 6, rules)
 						if len(keys)-9 <= 6 {
-							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2CM, Keys: []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1], temp[k+2], temp[k+2], temp[k+2]}, Values: []int{rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+2]), rules.Value(temp[k+2]), rules.Value(temp[k+2])}})
+							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2CM, Keys: key, Values: val})
 						} else {
-							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2CsM, Keys: []int{temp[k], temp[k], temp[k], temp[k+1], temp[k+1], temp[k+1], temp[k+2], temp[k+2], temp[k+2]}, Values: []int{rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+1]), rules.Value(temp[k+2]), rules.Value(temp[k+2]), rules.Value(temp[k+2])}})
+							accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion3c2CsM, Keys: key, Values: val})
 						}
 					}
 				}
@@ -632,10 +635,11 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 				if len(keys) == 4 {
 					break
 				}
+				key, val := RunFastMake(keys, []int{group[4][k], group[4][k], group[4][k], group[4][k]}, 3, rules)
 				if len(keys)-4 <= 3 {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion4C3, Keys: []int{group[4][k], group[4][k], group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion4C3, Keys: key, Values: val})
 				} else {
-					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion4C3s, Keys: []int{group[4][k], group[4][k], group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k]), rules.Value(group[4][k])}})
+					accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesUnion4C3s, Keys: key, Values: val})
 				}
 			}
 		}
@@ -761,6 +765,42 @@ func RunFastKey(val int) int {
 		return 2
 	}
 	return val + 2
+}
+
+func RunFastMake(keys []int, exclude []int, count int, rules Rules) ([]int, []int) {
+	values := make([]int, 0)
+	for _, key := range exclude {
+		j := 0
+		for _, val := range keys {
+			if val != key {
+				keys[j] = val
+				j++
+			}
+		}
+		keys = keys[:j]
+	}
+	for _, key := range keys {
+		values = append(values, rules.Value(key))
+	}
+	sort.Ints(values)
+	key := make([]int, 0)
+	val := make([]int, 0)
+	if len(keys) >= count {
+		for i := 0; i < count; i++ {
+			key = append(key, RunFastKey(values[i]))
+			val = append(val, values[i])
+		}
+	} else {
+		for i := 0; i < len(keys); i++ {
+			key = append(key, RunFastKey(values[i]))
+			val = append(val, values[i])
+		}
+	}
+	for _, k := range exclude {
+		key = append(key, k)
+		val = append(val, rules.Value(k))
+	}
+	return key, val
 }
 
 func parseUnionOrStraight(group map[int][]int, rules Rules) []model.Faces {
