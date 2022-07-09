@@ -2,6 +2,8 @@ package poker
 
 import (
 	"fmt"
+	"github.com/mlmdflr/ratel-core/consts"
+	"github.com/mlmdflr/ratel-core/model"
 	"testing"
 )
 
@@ -67,31 +69,48 @@ func TestRunFastDistribute(t *testing.T) {
 
 func TestRunFastParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
-		//{pokers: getPokers(8, 8, 8, 9, 9)},
-		//{pokers: getPokers(9, 9, 9, 4)},
-		{pokers: getPokers(10, 10, 10, 9, 9, 9, 8, 8, 8, 6, 6, 7, 5, 2, 9)},
-		{pokers: getPokers(10, 10, 10, 9, 9, 9, 8, 8, 8, 6, 6, 7, 5)},
-		//{pokers: getPokers(9, 9, 8, 8, 10, 10, 11, 11)},
-		//{pokers: getPokers(9, 9, 8, 8, 10, 10)},
-		//{pokers: getPokers(9, 9, 9, 9, 10, 10, 10, 10)},
-		//{pokers: getPokers(9, 9, 9, 9, 5, 5)},
-		//{pokers: getPokers(9, 9, 9, 9, 5)},
-		//{pokers: getPokers(14, 14)},
-		//{pokers: getPokers(14, 15)},
-		//{pokers: getPokers(15, 15)},
-		//{pokers: getPokers(3, 3, 3, 3, 3)},
-		//{pokers: getPokers(2, 2, 2, 2, 2)},
-		//{pokers: getPokers(3, 3, 3, 3, 3, 3)},
-		//{pokers: getPokers(2, 2, 2, 2, 2, 2)},
-		//{pokers: getPokers(14, 14, 14)},
-		//{pokers: getPokers(14, 14, 15)},
-		//{pokers: getPokers(14, 15, 15)},
-		//{pokers: getPokers(15, 15, 15)},
-		//{pokers: getPokers(3, 3, 3, 3, 3, 3, 3)},
-		//{pokers: getPokers(2, 2, 2, 2, 2, 2, 2)},
-		//{pokers: getPokers(3, 3, 3, 3, 3, 3, 3, 3)},
-		//{pokers: getPokers(2, 2, 2, 2, 2, 2, 2, 2)},
-		//{pokers: getPokers(14, 14, 15, 15)},
+		////順子 or 連隊
+		{pokers: getPokers(8, 8, 9, 9)},
+		{pokers: getPokers(8, 8, 9, 9, 10, 10)},
+		{pokers: getPokers(8, 8, 9, 9, 10, 10, 11, 11)},
+		{pokers: getPokers(6, 7, 8, 9, 10)},
+		{pokers: getPokers(7, 8, 9, 10, 11)},
+		{pokers: getPokers(4, 5, 6, 7, 8, 9, 10)},
+		{pokers: getPokers(5, 6, 7, 8, 9, 10, 11)},
+		//三帶2
+		{pokers: getPokers(6, 6, 6, 7)},
+		{pokers: getPokers(6, 6, 6, 6, 7)},
+		//四帶三
+		{pokers: getPokers(6, 6, 6, 6, 7, 7)},
+		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7)},
+		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 4, 5, 5)},
+		{pokers: getPokers(6, 6, 6)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10)},
+		{pokers: getPokers(5, 6, 7, 8, 9, 10, 11, 12, 13)},
+		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 7, 5, 5, 5, 4, 9, 8, 3)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 6, 7, 8, 3, 3, 3)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 5, 5, 5, 3, 3, 3)},
+		{pokers: getPokers(6, 6, 6, 7, 7, 7, 5, 5, 5, 7, 5, 10, 10, 10, 10)},
+		{pokers: getPokers(9, 9, 9, 9, 5)},
+		{pokers: getPokers(14, 14)},
+		{pokers: getPokers(14, 15)},
+		{pokers: getPokers(15, 15)},
+		{pokers: getPokers(3, 3, 3, 3, 3)},
+		{pokers: getPokers(2, 2, 2, 2, 2)},
+		{pokers: getPokers(3, 3, 3, 3, 3, 3)},
+		{pokers: getPokers(2, 2, 2, 2, 2, 2)},
+		{pokers: getPokers(14, 14, 14)},
+		{pokers: getPokers(14, 14, 15)},
+		{pokers: getPokers(14, 15, 15)},
+		{pokers: getPokers(15, 15, 15)},
+		{pokers: getPokers(3, 3, 3, 3, 3, 3, 3)},
+		{pokers: getPokers(2, 2, 2, 2, 2, 2, 2)},
+		{pokers: getPokers(3, 3, 3, 3, 3, 3, 3, 3)},
+		{pokers: getPokers(2, 2, 2, 2, 2, 2, 2, 2)},
+		{pokers: getPokers(14, 14, 15, 15)},
 	}
 	preScore := int64(-1)
 	for _, testCase := range testCases {
@@ -104,5 +123,13 @@ func TestRunFastParseFacesScore(t *testing.T) {
 			preScore = faces.Score
 			t.Log(testCase.pokers.String(), faces.Score, faces.Type)
 		}
+	}
+}
+
+func TestRunFastComparativeFaces(t *testing.T) {
+	list := RunFastComparativeFaces(model.Faces{Keys: []int{6, 7, 5, 8, 9}, Values: []int{4, 5, 3, 6, 7}, Score: int64(4), Main: 1, Type: consts.FacesStraights}, getPokers(2, 12, 13, 12, 12, 11, 10, 9, 8, 7, 4, 4, 4, 1), runFastRules)
+	if len(list) > 0 {
+		faces := list[0]
+		t.Log(faces.Values, faces.Score, faces.Type)
 	}
 }
