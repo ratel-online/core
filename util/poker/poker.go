@@ -408,6 +408,25 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 				extra = len(values) - main
 				score += int64(group[3][0]*3 + group[3][1]*3)
 				list = append(list, model.Faces{Values: values, Score: score, Main: main, Extra: extra, Type: consts.FacesType(_type)})
+			} else if len(group[3]) > 2 && len(values)-6 == 4 {
+				temp := make([]int, 0)
+				for k := range group[3] {
+					temp = append(temp, group[3][k])
+				}
+				sort.Ints(temp)
+				for k := range temp {
+					if k+1 >= len(temp) {
+						break
+					}
+					if temp[k+1]-temp[k] == 1 {
+						_type = consts.FacesUnion3c2Cs
+						main = 6
+						extra = len(values) - main
+						score += int64(temp[k]*3 + temp[k+1]*3)
+						list = append(list, model.Faces{Values: values, Score: score, Main: main, Extra: extra, Type: consts.FacesType(_type)})
+						break
+					}
+				}
 			} else if len(group[3]) == 3 && len(values)-9 <= 6 {
 				_type = consts.FacesUnion3c2CM
 				if len(values)-9 == 6 {
@@ -532,7 +551,6 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 				accord = append(accord, model.Faces{Score: lastPokers.Score + 1, Type: consts.FacesDouble, Keys: []int{group[4][k], group[4][k]}, Values: []int{rules.Value(group[4][k]), rules.Value(group[4][k])}})
 			}
 		}
-
 		break
 	//三張處理
 	case consts.FacesTriple, consts.FacesUnion3, consts.FacesUnion3c2, consts.FacesUnion3c2s:
@@ -636,7 +654,7 @@ func RunFastComparativeFaces(lastPokers model.Faces, pokers model.Pokers, rules 
 		}
 		break
 		//連隊處理
-	//連隊處理
+	//連隊處理`
 	case consts.FacesDoubles:
 		if len(keys) >= len(lastPokers.Values) {
 			temp := make([]int, 0)

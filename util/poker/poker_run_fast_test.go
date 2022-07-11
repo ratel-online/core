@@ -68,6 +68,8 @@ func TestRunFastDistribute(t *testing.T) {
 
 func TestRunFastParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
+
+		{pokers: getPokers(10, 10, 10, 11, 11, 11, 8, 8, 8, 5)},
 		//順子 or 連隊
 		{pokers: getPokers(8, 8, 9, 9)},
 		{pokers: getPokers(8, 8, 9, 9, 10, 10)},
