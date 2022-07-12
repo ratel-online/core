@@ -203,7 +203,7 @@ func TestParseFacesScore(t *testing.T) {
 				t.Error(fmt.Sprintf("err score, pre %v should lt %v", preScore, faces.Score))
 			}
 			preScore = faces.Score
-			t.Log(testCase.pokers.String(), faces.Score)
+			t.Log(testCase.pokers.String(), faces.Score, faces.Type)
 		}
 	}
 }

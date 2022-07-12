@@ -94,3 +94,29 @@ func GetDontShuffleBase() model.Pokers {
 	}
 	return base
 }
+
+func GetRunFastDontShuffleBase() model.Pokers {
+	base := model.Pokers{}
+	keys := make([]int, 0)
+	for k := 1; k <= 13; k++ {
+		keys = append(keys, k)
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	r.Shuffle(len(keys), func(i, j int) {
+		keys[i], keys[j] = keys[j], keys[i]
+	})
+	for _, k := range keys {
+		if k == 1 {
+			for t := 1; t <= 3; t++ {
+				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+			}
+		} else if k == 2 {
+			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+		} else if k <= 13 {
+			for t := 1; t <= 4; t++ {
+				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+			}
+		}
+	}
+	return base
+}
