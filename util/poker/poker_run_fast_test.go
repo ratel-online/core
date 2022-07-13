@@ -70,39 +70,42 @@ func TestRunFastParseFacesScore(t *testing.T) {
 	testCases := []parseFacesCase{
 
 		{pokers: getPokers(10, 10, 10, 11, 11, 11, 8, 8, 8, 5)},
-		//順子 or 連隊
-		{pokers: getPokers(8, 8, 9, 9)},
-		{pokers: getPokers(8, 8, 9, 9, 10, 10)},
-		{pokers: getPokers(8, 8, 9, 9, 10, 10, 11, 11)},
-		{pokers: getPokers(6, 7, 8, 9, 10)},
-		{pokers: getPokers(7, 8, 9, 10, 11)},
-		{pokers: getPokers(4, 5, 6, 7, 8, 9, 10)},
-		{pokers: getPokers(5, 6, 7, 8, 9, 10, 11)},
-		//三張
-		{pokers: getPokers(6, 6, 6)},
-		//三張連隊
-		{pokers: getPokers(6, 6, 6, 7, 7, 7)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10)},
-		//三帶2
-		{pokers: getPokers(6, 6, 6, 7)},
-		{pokers: getPokers(6, 6, 6, 6, 7)},
-		//四帶三
-		{pokers: getPokers(6, 6, 6, 6, 7, 7)},
-		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7)},
-		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 4, 5, 5)},
-		{pokers: getPokers(5, 6, 7, 8, 9, 10, 11, 12, 13)},
-		{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 7, 5, 5, 5, 4, 9, 8, 3)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 6, 7, 8, 3, 3, 3)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 5, 5, 5, 3, 3, 3)},
-		{pokers: getPokers(6, 6, 6, 7, 7, 7, 5, 5, 5, 7, 5, 10, 10, 10, 10)},
-		{pokers: getPokers(9, 9, 9, 9, 5)},
-		{pokers: getPokers(3, 3, 3, 3)},
-		{pokers: getPokers(2, 2, 2, 2)},
-		//連隊
-		{pokers: getPokers(11, 11, 11, 11)},
-		{pokers: getPokers(13, 13, 13, 13)},
+		{pokers: getPokers(7, 7, 7, 8, 8, 8, 3, 3, 3, 7)},
+		{pokers: getPokers(7, 7, 7, 8, 8, 8, 3, 3, 3, 3)},
+
+		////順子 or 連隊
+		//{pokers: getPokers(8, 8, 9, 9)},
+		//{pokers: getPokers(8, 8, 9, 9, 10, 10)},
+		//{pokers: getPokers(8, 8, 9, 9, 10, 10, 11, 11)},
+		//{pokers: getPokers(6, 7, 8, 9, 10)},
+		//{pokers: getPokers(7, 8, 9, 10, 11)},
+		//{pokers: getPokers(4, 5, 6, 7, 8, 9, 10)},
+		//{pokers: getPokers(5, 6, 7, 8, 9, 10, 11)},
+		////三張
+		//{pokers: getPokers(6, 6, 6)},
+		////三張連隊
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10)},
+		////三帶2
+		//{pokers: getPokers(6, 6, 6, 7)},
+		//{pokers: getPokers(6, 6, 6, 6, 7)},
+		////四帶三
+		//{pokers: getPokers(6, 6, 6, 6, 7, 7)},
+		//{pokers: getPokers(6, 6, 6, 6, 7, 7, 7)},
+		//{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 4, 5, 5)},
+		//{pokers: getPokers(5, 6, 7, 8, 9, 10, 11, 12, 13)},
+		//{pokers: getPokers(6, 6, 6, 6, 7, 7, 7, 7, 5, 5, 5, 4, 9, 8, 3)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 6, 7, 8, 3, 3, 3)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 8, 8, 8, 5, 5, 5, 3, 3, 3)},
+		//{pokers: getPokers(6, 6, 6, 7, 7, 7, 5, 5, 5, 7, 5, 10, 10, 10, 10)},
+		//{pokers: getPokers(9, 9, 9, 9, 5)},
+		//{pokers: getPokers(3, 3, 3, 3)},
+		//{pokers: getPokers(2, 2, 2, 2)},
+		////連隊
+		//{pokers: getPokers(11, 11, 11, 11)},
+		//{pokers: getPokers(13, 13, 13, 13)},
 	}
 	preScore := int64(-1)
 	for _, testCase := range testCases {
