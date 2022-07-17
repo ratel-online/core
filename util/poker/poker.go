@@ -322,6 +322,7 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 				for k := range group[3] {
 					temp = append(temp, group[3][k])
 				}
+				sort.Ints(temp)
 				switch len(temp) - 1 {
 				case 1:
 					if math.Abs(float64(group[4][0]-group[3][0])) == 1 {
@@ -333,12 +334,17 @@ func RunFastParseFaces(pokers model.Pokers, rules Rules) []model.Faces {
 					}
 					break
 				case 2:
-					sort.Ints(temp)
 					if temp[2]-temp[0] == 2 {
 						_type = consts.FacesUnion3c2CsM
 						main = 9
 						extra = len(values) - main
 						score = int64(group[4][0]*3 + group[3][0]*3 + group[3][1]*3)
+						list = append(list, model.Faces{Values: values, Score: score, Main: main, Extra: extra, Type: consts.FacesType(_type)})
+					} else if temp[2]-temp[1] == 1 {
+						_type = consts.FacesUnion3c2Cs
+						main = 6
+						extra = len(values) - main
+						score = int64(temp[2]*3 + temp[1]*3)
 						list = append(list, model.Faces{Values: values, Score: score, Main: main, Extra: extra, Type: consts.FacesType(_type)})
 					}
 					break
