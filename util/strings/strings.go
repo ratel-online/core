@@ -26,6 +26,7 @@ var desensitizeWords = [][]string{
 	{"ma", "爹"},
 	{"狗", "神"},
 	{"gou", "神"},
+	{"sb", "神"},
 }
 
 func String(dest interface{}) string {
