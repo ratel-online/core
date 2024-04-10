@@ -11,13 +11,37 @@ import (
 	"time"
 )
 
+type PokerSuit int
+
+const (
+	Spade PokerSuit = iota
+	Heart
+	Club
+	Diamond
+)
+
+func (s PokerSuit) String() string {
+	switch s {
+	case Spade:
+		return "♠"
+	case Heart:
+		return "♥"
+	case Club:
+		return "♣"
+	case Diamond:
+		return "♦"
+	}
+	return ""
+}
+
 type Pokers []Poker
 
 type Poker struct {
-	Key  int    `json:"key"`
-	Val  int    `json:"val"`
-	Desc string `json:"desc"`
-	Oaa  bool   `json:"oaa"`
+	Key  int       `json:"key"`
+	Val  int       `json:"val"`
+	Desc string    `json:"desc"`
+	Oaa  bool      `json:"oaa"`
+	Suit PokerSuit `json:"suit"`
 }
 
 type Faces struct {
@@ -143,5 +167,15 @@ func (pokers Pokers) OaaString() string {
 			buf.WriteString(" ")
 		}
 	}
+	return buf.String()
+}
+
+func (pokers Pokers) TexasString() string {
+	buf := bytes.Buffer{}
+	for i := 0; i < len(pokers); i++ {
+		poker := pokers[i]
+		buf.WriteString(fmt.Sprintf("%s%v ", poker.Suit, poker.Desc))
+	}
+	buf.Truncate(buf.Len() - 1)
 	return buf.String()
 }

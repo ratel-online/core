@@ -49,8 +49,8 @@ func init() {
 		}
 	}
 	for k := 1; k <= 13; k++ {
-		for t := 1; t <= 4; t++ {
-			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+		for t := 0; t < 4; t++ {
+			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k], Suit: model.PokerSuit(t)})
 		}
 	}
 	for k := 14; k <= 15; k++ {
@@ -74,7 +74,7 @@ func GetDesc(key int) string {
 }
 
 func GetDontShuffleBase() model.Pokers {
-	base := model.Pokers{}
+	pokers := model.Pokers{}
 	keys := make([]int, 0)
 	for k := 1; k <= 15; k++ {
 		keys = append(keys, k)
@@ -86,17 +86,17 @@ func GetDontShuffleBase() model.Pokers {
 	for _, k := range keys {
 		if k <= 13 {
 			for t := 1; t <= 4; t++ {
-				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+				pokers = append(pokers, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 			}
 		} else {
-			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+			pokers = append(pokers, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 		}
 	}
-	return base
+	return pokers
 }
 
 func GetRunFastDontShuffleBase() model.Pokers {
-	base := model.Pokers{}
+	pokers := model.Pokers{}
 	keys := make([]int, 0)
 	for k := 1; k <= 13; k++ {
 		keys = append(keys, k)
@@ -108,15 +108,26 @@ func GetRunFastDontShuffleBase() model.Pokers {
 	for _, k := range keys {
 		if k == 1 {
 			for t := 1; t <= 3; t++ {
-				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+				pokers = append(pokers, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 			}
 		} else if k == 2 {
-			base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+			pokers = append(pokers, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 		} else if k <= 13 {
 			for t := 1; t <= 4; t++ {
-				base = append(base, model.Poker{Key: k, Val: 0, Desc: desc[k]})
+				pokers = append(pokers, model.Poker{Key: k, Val: 0, Desc: desc[k]})
 			}
 		}
 	}
-	return base
+	return pokers
+}
+
+func GetTexasBase() model.Pokers {
+	pokers := model.Pokers{}
+	for _, poker := range base {
+		if poker.Key > 13 {
+			continue
+		}
+		pokers = append(pokers, model.Poker{Key: poker.Key, Val: poker.Val, Desc: poker.Desc, Suit: poker.Suit})
+	}
+	return pokers
 }
