@@ -176,6 +176,8 @@ func (pokers Pokers) TexasString() string {
 		poker := pokers[i]
 		buf.WriteString(fmt.Sprintf("%s%v ", poker.Suit, poker.Desc))
 	}
-	buf.Truncate(buf.Len() - 1)
+	if buf.Len() > 0 {
+		buf.Truncate(buf.Len() - 1)
+	}
 	return buf.String()
 }
