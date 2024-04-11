@@ -279,9 +279,8 @@ func (h *Hand) ShowHand() {
 
 // 将手牌转化成整数形式
 func turnToValue(cards Cards) int {
-	//我是升序排的，所以反着来
 	res := 0
-	for i := len(cards) - 1; i >= 0; i-- {
+	for i := 0; i < cards.Len(); i++ {
 		res *= 10
 		res += cards[i].Value
 	}

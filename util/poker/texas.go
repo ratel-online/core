@@ -20,8 +20,9 @@ func ParseTexasFaces(hand, board model.Pokers) (*model.TexasFaces, error) {
 		}
 		val -= 2
 		err := h.SetCard(&handx.Card{
-			Suit:  int(c.Suit),
-			Value: val,
+			Suit:     int(c.Suit),
+			Value:    val,
+			Showtime: val,
 		})
 		if err != nil {
 			return nil, err
