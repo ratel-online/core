@@ -9,7 +9,11 @@ func ParseTexasFaces(hand, board model.Pokers) (*model.TexasFaces, error) {
 	h := handx.GetHand()
 	h.Init()
 
-	for _, c := range append(hand, board...) {
+	// prevent slice append slice from modifying the original slice
+	cards := make(model.Pokers, 0)
+	cards = append(cards, hand...)
+	cards = append(cards, board...)
+	for _, c := range cards {
 		val := c.Key
 		if val == 1 {
 			val = 14
