@@ -2,39 +2,38 @@ package poker
 
 import (
 	"github.com/ratel-online/core/model"
-	handx "github.com/ratel-online/core/pkg/hand"
+	"github.com/ratel-online/core/pkg/holdem"
 )
 
 func ParseTexasFaces(hand, board model.Pokers) (*model.TexasFaces, error) {
-	h := handx.GetHand()
-	h.Init()
-
 	// prevent slice append slice from modifying the original slice
 	cards := make(model.Pokers, 0)
 	cards = append(cards, hand...)
 	cards = append(cards, board...)
-	for _, c := range cards {
+
+	holdemCards := [7]holdem.Card{}
+	for i, c := range cards {
 		val := c.Key
 		if val == 1 {
 			val = 14
 		}
-		val -= 2
-		err := h.SetCard(&handx.Card{
-			Suit:     int(c.Suit),
-			Value:    val,
-			Showtime: val,
-		})
-		if err != nil {
-			return nil, err
+		val <<= 4
+		switch c.Suit {
+		case model.Spade:
+			val |= 1
+		case model.Club:
+			val |= 2
+		case model.Heart:
+			val |= 3
+		case model.Diamond:
+			val |= 4
 		}
-	}
-	err := h.AnalyseHand()
-	if err != nil {
-		return nil, err
+		holdemCards[i] = holdem.Card(val)
 	}
 
+	score, _ := holdem.HighestHandValue(holdemCards)
 	return &model.TexasFaces{
-		Type:  model.TexasFacesType(h.Level),
-		Score: int64(h.FinalValue),
+		Type:  model.TexasFacesType(score>>20 + 1),
+		Score: int64(score),
 	}, nil
 }
